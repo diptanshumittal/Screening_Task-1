@@ -1,5 +1,10 @@
-<h1> hello world {{name}}</h1>
-
+{% if data %}
+<li>welcome  {{user.name}}</li>
+<li><a href="logout">Logout</a></li>
+{% else %}
+<li><a href="accounts/login">Login</a></li>s
+<li><a href="accounts/register">Register</a></li>
+{% endif %}
 
 <form action="add" method="post">
 	

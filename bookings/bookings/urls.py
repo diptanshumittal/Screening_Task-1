@@ -22,6 +22,6 @@ urlpatterns = [
     
 	path('', include('calc.urls')),
     path('admin/', include('polls.urls')),
-    path('admin/', admin.site.urls),
+    path('admins/', admin.site.urls),
     
 ]
