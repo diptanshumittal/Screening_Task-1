@@ -8,6 +8,13 @@ class Rooms(models.Model):
     startTime =  models.TimeField()
     endTime = models.TimeField()
     Number = models.IntegerField()
+    managerId = models.CharField(max_length=20)
+
+class Bookings(models.Model):
+    number = models.IntegerField()
+    userid = models.IntegerField()
+    managerid = models.IntegerField()
+    slot = models.CharField(max_length=20)
 
 
 class User(models.Model):
@@ -18,7 +25,7 @@ class User(models.Model):
     contact_number = models.IntegerField()
     bookings = models.BooleanField(default = False)
 
-class Admin(models.Model):
+class Manager(models.Model):
     loginid = models.CharField(max_length = 100)
     password = models.CharField(max_length = 100)
     name = models.CharField(max_length = 100)
