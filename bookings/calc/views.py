@@ -19,6 +19,16 @@ def logout(request):
 	return HttpResponseRedirect('/')
 
 
+def addroom(request):
+	if request.method=='POST':
+		number = request.POST['number']
+		userid = request.POST['userid']
+		managerid = request.POST['managerid']
+		slot = request.POST['slot']
+		return HttpResponseRedirect('addroom')
+	else:
+		return render(request,'addroom.html');
+
 def home(request):
 	if request.method=='POST':
 		val1 = int(request.POST["num1"])
