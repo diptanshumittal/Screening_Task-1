@@ -6,22 +6,6 @@
 <li><a href="signup">Sign Up</a></li>
 {% endif %} 
 
-<script type="text/javascript">
-	var x = 1;
-    {% for room in rooms %}
-    document.write(" < li > {{ room.rn }}  hererrerere { { room.mid } } </li >")
-        < form action = "bookroom" method = "post" >
-		{% csrf_token %}
-		<input type="text" name="room" value="{{x}}">
-		<input type="submit" value="book">
-		</form>")
-    
-        x=x+1;
-	{% endfor %}
-
-</script>
-
-
 {% if auth and manager %}
 <li><a href="addroom">Add Room slot</a></li>
 <li><a href="changeslots">Change Slots</a></li>
@@ -36,10 +20,22 @@
 <form action="" method="post">
 
 	{% csrf_token %}
-	Enter the Date : <input type=" text" name="d"></br>
-	Enter the Start time : <input type=" text" name="st"></br>
-	Enter the End time : <input type=" text" name="et"></br>
+	<p>     Enter the Date :    <input type=" text" name="d">    Enter the Start time :   <input type=" text" name="st">     Enter the End time :    <input type=" text" name="et"></p>
 	<input type="submit">
 </form>
 
 
+{% for room in rooms %}
+
+{% if auth and not manager %}
+<form action="bookroom" method="post">
+	{% csrf_token %}
+	<p> {{room.rn}} vfv  {{room.mid}} 
+	<input name="room" value="{{forloop.counter}}" hidden>
+	<input type="submit" value="book"></p>
+</form>
+{% else %}
+<p> {{room.rn}} vfv  {{room.mid}} </p>
+{% endif %}
+
+{% endfor %}

@@ -2,6 +2,7 @@ from django.shortcuts import render , redirect
 from django.http import HttpResponse
 from calc.models import Rooms
 from calc.models import Customer
+from calc.models import Bookings
 from calc.models import Manager
 from django.http import HttpResponseRedirect
 from datetime import datetime , timedelta
@@ -12,6 +13,10 @@ auth = False
 m_auth = False
 auth_user = [] 
 rooms = []
+
+st = 0 
+et = 0 
+
 def logout(request):
 	global auth
 	auth = False
@@ -42,7 +47,50 @@ def addroom(request):
 
 def bookroom(request):
 	if request.method=='POST':
-		room = request.POST['room']
+		index = int(request.POST['room']) -1 
+		print(index)
+		room = rooms[index]
+		if(room.startTime==st):
+			if(room.endTime==et):
+				temp = Rooms.objects.get(id=room.id)
+				temp.status = True
+				temp.save(update_fields = ['status'])
+			else:
+				temp = Rooms.objects.get(id=room.id)
+				temp.status = True
+				p = temp.endTime
+				temp.endTime = et
+				temp.save(update_fields = ['status'])
+				temp.save(update_fields = ['endTime'])
+				ty = Rooms( mid = temp.mid  , startTime = et , endTime = p , rn = temp.rn , date = temp.date , addate = temp.addate , status = False)
+				ty.save()
+		elif (room.endTime == et):
+			temp = Rooms.objects.get(id=room.id)
+			temp.status = True
+			p = temp.startTime
+			temp.startTime = st
+			temp.save(update_fields = ['status'])
+			temp.save(update_fields = ['startTime'])
+			ty = Rooms( mid = temp.mid  , startTime = p , endTime = st , rn = temp.rn , date = temp.date , addate = temp.addate , status = False)
+			ty.save()
+		else:
+			temp = Rooms.objects.get(id=room.id)
+			temp.status = True
+			pe = temp.endTime
+			p = temp.startTime
+			temp.startTime = st
+			temp.endTime = et 
+			temp.save(update_fields = ['status'])
+			temp.save(update_fields = ['startTime'])
+			temp.save(update_fields = ['endTime'])
+			ty = Rooms( mid = temp.mid  , startTime = p , endTime = st , rn = temp.rn , date = temp.date , addate = temp.addate , status = False)
+			ty.save()
+			ty = Rooms( mid = temp.mid  , startTime = et , endTime = pe , rn = temp.rn , date = temp.date , addate = temp.addate , status = False)
+			ty.save()
+
+		book = Bookings(rid = room.id , cid = auth_user.id , mid = room.mid)
+		book.save()
+		print(book)
 		print(room)
 		return HttpResponseRedirect('/')
 
@@ -51,18 +99,20 @@ def home(request):
 	rooms=[]
 	if request.method=='POST':
 		d = datetime.strptime(request.POST['d'] , '%m-%d-%Y').date()
+		global st 
+		global et
 		st = int(request.POST['st'])
 		et = int(request.POST['et'])
 		temp = Rooms.objects.all()
 		for t in temp:
-			if(t.date == d and t.addate<d):
+			if(t.status==False and t.date == d and t.addate<d):
 				print("here")
-				if(t.startTime<st and t.endTime>=et):
+				if(t.startTime<=st and t.endTime>=et):
 					print("here")
 					rooms.append(t)
-		return render(request,'home.html' , {'auth' : auth, 'user' : auth_user , 'manager':m_auth , 'rooms':rooms});
+		return render(request,'home.html' , {'auth' : auth, 'user' : auth_user , 'manager':m_auth , 'rooms':rooms , 'rsize' : range(len(rooms))});
 	else:
-		return render(request,'home.html' , {'auth' : auth, 'user' : auth_user , 'manager':m_auth , 'rooms':rooms});
+		return render(request,'home.html' , {'auth' : auth, 'user' : auth_user , 'manager':m_auth , 'rooms':rooms , 'rsize' : range(len(rooms))});
 
 
 def signinmanager(request):
