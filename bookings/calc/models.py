@@ -4,30 +4,28 @@ from django.db import models
 
 
 class Rooms(models.Model):
-    Date =  models.DateField()
-    startTime =  models.TimeField()
-    endTime = models.TimeField()
-    Number = models.IntegerField()
-    managerId = models.CharField(max_length=20)
+    date =  models.DateField()
+    startTime =  models.IntegerField()
+    endTime = models.IntegerField()
+    rn = models.IntegerField()
+    mid = models.IntegerField()
+    addate = models.DateField()
+    status = models.BooleanField(default = False)
 
 class Bookings(models.Model):
-    number = models.IntegerField()
-    userid = models.IntegerField()
-    managerid = models.IntegerField()
-    slot = models.CharField(max_length=20)
+    rid = models.IntegerField()
+    cid = models.IntegerField()
+    mid = models.IntegerField()
 
 
-class User(models.Model):
+class Customer(models.Model):
     loginid = models.CharField(max_length = 100)
     password = models.CharField(max_length = 100)
     name = models.CharField(max_length = 100)
-    email = models.CharField(max_length = 100)
-    contact_number = models.IntegerField()
-    bookings = models.BooleanField(default = False)
+    email = models.EmailField(max_length = 254)
 
 class Manager(models.Model):
     loginid = models.CharField(max_length = 100)
     password = models.CharField(max_length = 100)
     name = models.CharField(max_length = 100)
-    email = models.CharField(max_length = 100)
-    contact_number = models.IntegerField()
+    email = models.EmailField(max_length = 254)

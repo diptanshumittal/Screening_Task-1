@@ -1,14 +1,15 @@
 from django.shortcuts import render , redirect
 from django.http import HttpResponse
 from calc.models import Rooms
-from calc.models import User
+from calc.models import Customer
 from calc.models import Manager
 from django.http import HttpResponseRedirect
+from datetime import datetime , timedelta
 # Create your views here.
 
 
 auth = False 
-manager = False
+m_auth = False
 auth_user = [] 
 rooms = []
 def logout(request):
@@ -20,29 +21,49 @@ def logout(request):
 
 
 def addroom(request):
+	global auth 
 	if request.method=='POST':
 		number = request.POST['number']
-		userid = request.POST['userid']
-		managerid = request.POST['managerid']
-		slot = request.POST['slot']
+		st = int(request.POST['st'])
+		et = int(request.POST['et'])
+		d = datetime.strptime(request.POST['d'] , '%m-%d-%Y').date()
+		ad = int(request.POST['ad'])
+		ad = d - timedelta(days = ad)
+		print(ad)
+		print(auth_user.id)
+		print(st)
+		room = Rooms( mid = auth_user.id  , startTime = st , endTime = et , rn = number , date = d , addate = ad , status = False)
+		room.save()
 		return HttpResponseRedirect('addroom')
 	else:
+		if(auth == False or m_auth==False):
+			return HttpResponseRedirect('signinmanager')
 		return render(request,'addroom.html');
 
-def home(request):
+def bookroom(request):
 	if request.method=='POST':
-		val1 = int(request.POST["num1"])
-		val2 = int(request.POST["num2"])
+		room = request.POST['room']
+		print(room)
+		return HttpResponseRedirect('/')
 
+def home(request):
+	global rooms
+	rooms=[]
+	if request.method=='POST':
+		d = datetime.strptime(request.POST['d'] , '%m-%d-%Y').date()
+		st = int(request.POST['st'])
+		et = int(request.POST['et'])
+		temp = Rooms.objects.all()
+		for t in temp:
+			if(t.date == d and t.addate<d):
+				print("here")
+				if(t.startTime<st and t.endTime>=et):
+					print("here")
+					rooms.append(t)
+		return render(request,'home.html' , {'auth' : auth, 'user' : auth_user , 'manager':m_auth , 'rooms':rooms});
+	else:
+		return render(request,'home.html' , {'auth' : auth, 'user' : auth_user , 'manager':m_auth , 'rooms':rooms});
 
-	print(auth)
-	return render(request,'home.html' , {'data' : auth, 'user' : auth_user , 'manager':manager , 'rooms':rooms});
-
-def add(request):
-	val1 = int(request.POST["num1"])
-	val2 = int(request.POST["num2"])
-	res = val1+val2
-	return render(request,'result.html', {'result': res});
 
 def signinmanager(request):
 	if request.method == 'POST':
@@ -52,8 +73,8 @@ def signinmanager(request):
 		for user in users:
 			if(user.loginid==loginid and user.password == password):
 				global auth
-				global manager 
-				manager= True
+				global m_auth 
+				m_auth= True
 				auth = True
 				global auth_user
 				auth_user = user
@@ -67,7 +88,7 @@ def signinuser(request):
 	if request.method == 'POST':
 		loginid = request.POST['loginid']
 		password = request.POST['password']
-		users = User.objects.all()
+		users = Customer.objects.all()
 		for user in users:
 			if(user.loginid==loginid and user.password == password):
 				global auth 
@@ -97,15 +118,15 @@ def signupuser(request):
 		password = request.POST['password']
 		name = request.POST['name']
 		email = request.POST['email']
-		contact_number = int(request.POST['contact_number'])
-		managers = User.objects.all()
+		customers = Customer.objects.all()
 		flag=0
-		for manager in managers:
-			if(manager.loginid == loginid):
+		for customer in customers:
+			if(customer.loginid == loginid):
 				flag=1
 		if(flag==0):
-			user = User(loginid = loginid , name = name , password = password , email = email , contact_number = contact_number)
-			user.save();
+			customer = Customer(loginid = loginid , name = name , password = password , email = email)
+			customer.save()
+			print(customer.id)
 			print("user created")
 		else:
 			return HttpResponseRedirect('/signupuser')
@@ -120,15 +141,15 @@ def signupmanager(request):
 		password = request.POST['password']
 		name = request.POST['name']
 		email = request.POST['email']
-		contact_number = int(request.POST['contact_number'])
 		managers = Manager.objects.all()
 		flag=0
 		for manager in managers:
 			if(manager.loginid == loginid):
 				flag=1
 		if(flag==0):
-			user = Manager(loginid = loginid , name = name , password = password , email = email , contact_number = contact_number)
+			user = Manager(loginid = loginid , name = name , password = password , email = email)
 			user.save();
+			print(user.id)
 			print("Manager created")
 		else:
 			return HttpResponseRedirect('/signupmanager')

@@ -1,11 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\bookings",
     "\\calc",
-    "\\calc\\migrations",
-    "\\templates"
+    "\\calc\\migrations"
   ],
-  "SelectedNode": "\\calc\\models.py",
+  "SelectedNode": "\\calc\\views.py",
   "PreviewInSolutionExplorer": false
 }
