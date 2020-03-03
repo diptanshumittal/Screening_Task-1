@@ -13,6 +13,7 @@ auth = False
 m_auth = False
 auth_user = [] 
 rooms = []
+bookings =[]
 
 st = 0 
 et = 0 
@@ -93,7 +94,67 @@ def bookroom(request):
 		print(book)
 		print(room)
 		return HttpResponseRedirect('/')
+	else:
+		if(auth==True and m_auth==False):
+			return render(request,'bookroom.html' , {'rooms':rooms , 'rsize' : range(len(rooms))});
+def deletebookings(request):
+	if(request.method=='POST'):
+		index = int(request.POST['bid']) -1 
+		print(index)
+		global bookings
+		booking = bookings[index]
+		troom = Rooms.objects.get(booking.rid)
+		rooml = []
+		rooms = Rooms.objects.all()
+		for room in rooms:
+			if(room.rn==troom.rn and room.mid==troom.mid and room.date==troom.date):
+				room1.append(room)
+		for room in room1:
+			if(room.status==False):
+				if(room.startTime==troom.endTime):
+					room.startTime = troom.startTime 
+					room.save(update_fields = ['startTime'])
+					Rooms.objects.get(troom.id).delete()
+				elif(room.endTime==troom.endTime):
+					room.endTime = troom.endTime 
+					room.save(update_fields = ['endTime'])
+					Rooms.objects.get(troom.id).delete()
+		Bookings.objects.get(booking.id).delete()
+		return HttpResponseRedirect('/')
+	else:
+		al = Bookings.objects.all()
+		bookings = []
+		for ty in al :
+			if(ty.cid == auth_user.id):
+				bookings.append(ty)
+		return render(request , 'bookings.html' , {'bookings':bookings , 'delete':True})
 
+def bookings(request):
+	al = Bookings.objects.all()
+	global bookings
+	for ty in al :
+		if(ty.cid == auth_user.id):
+			bookings.append(ty)
+	return render(request , 'bookings.html' , {'bookings':bookings , 'delete':False})
+
+
+
+def bookroom1(request):
+	if request.method=='POST':
+		d = datetime.strptime(request.POST['d'] , '%m-%d-%Y').date()
+		global st 
+		global et
+		st = int(request.POST['st'])
+		et = int(request.POST['et'])
+		temp = Rooms.objects.all()
+		for t in temp:
+			if(t.status==False and t.date == d and t.addate<d):
+				print("here")
+				if(t.startTime<=st and t.endTime>=et):
+					print("here")
+					rooms.append(t)
+		return render(request,'bookroom.html' , {'rooms':rooms , 'rsize' : range(len(rooms))});
+	
 def home(request):
 	global rooms
 	rooms=[]

@@ -8,12 +8,16 @@
 
 {% if auth and manager %}
 <li><a href="addroom">Add Room slot</a></li>
-<li><a href="changeslots">Change Slots</a></li>
+<li><a href="changeslots">Edit Room Slots</a></li>
 <li><a href="viewbookings">View Bookings</a></li>
+<form action="bookroom" method="post">
+	{% csrf_token %}
+	<input type="submit" value="View Summary of al Rooms">
+</form>
 {% elif auth %}
 <li><a href="bookroom">Book Room</a></li>
 <li><a href="deletebookings">Delete Bookings</a></li>
-<li><a href="viewbookings">View Bookings</a></li>
+<li><a href="bookings">View Bookings</a></li>
 {% endif %}
 
 

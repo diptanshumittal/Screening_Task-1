@@ -1,0 +1,12 @@
+{% for booking in bookings %}
+{% if delete %}
+<form action="/deletebookings" method="post">
+	{% csrf_token %}
+	<p> {{booking.rid}} vfv  {{booking.mid}} frfrf {{booking.rid}}
+	<input name="bid" value="{{forloop.counter}}" hidden>
+	<input type="submit" value="delete"></p>
+</form>
+{% else %}
+<p> {{booking.rid}} vfv  {{booking.mid}} frfrf {{booking.rid}}</p>
+{% endif %}
+{% endfor %}

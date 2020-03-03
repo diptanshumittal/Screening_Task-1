@@ -1,0 +1,18 @@
+<form action="/bookroom1" method="post">
+
+	{% csrf_token %}
+	<p>     Enter the Date :    <input type=" text" name="d">    Enter the Start time :   <input type=" text" name="st">     Enter the End time :    <input type=" text" name="et"></p>
+	<input type="submit">
+</form>
+
+
+{% for room in rooms %}
+
+<form action="/bookroom" method="post">
+	{% csrf_token %}
+	<p> {{room.rn}} vfv  {{room.mid}} 
+	<input name="room" value="{{forloop.counter}}" hidden>
+	<input type="submit" value="book"></p>
+</form>
+
+{% endfor %}

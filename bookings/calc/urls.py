@@ -12,4 +12,9 @@ urlpatterns = {
 	path('signupmanager',  views.signupmanager , name='signupmanager'),
 	path('addroom',  views.addroom , name='addroom'),
 	path('bookroom',  views.bookroom , name='bookroom'),
+	path('bookroom1',  views.bookroom1 , name='bookroom1'),
+	path('bookings',  views.bookings , name='bookings'),changeslots
+	path('deletebookings',  views.deletebookings , name='deletebookings'),
+	path('changeslots',  views.changeslots , name='changeslots'),
+	path('viewbookings',  views.viewbookings , name='viewbookings'),
 }
