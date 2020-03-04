@@ -23,7 +23,52 @@ def logout(request):
 	auth = False
 	global auth_user
 	auth_user = []
+	global m_auth
+	m_auth = False
 	return HttpResponseRedirect('/')
+
+def viewbookings(request):
+	if auth and m_auth :
+		bkgs = Bookings.objects.all()
+		li = []
+		for bkg in bkgs:
+			if(bkg.mid==auth_user.id):
+				li.append(bkg)
+		return render(request,'viewbookings.html' , {'bookings': li}); 
+	else:
+		return HttpResponseRedirect('/signinuser')
+
+
+def changeslots(request):
+	global rooms
+	if(request.method=='POST'):
+		t = request.POST['value']
+		index = int(request.POST['room']) - 1
+		room = rooms[index]
+		if(t=="delete"):
+			Rooms.objects.get(id = room.id).delete()
+		else :
+			st = int(request.POST['st'])
+			et = int(request.POST['et'])
+			d = datetime.strptime(request.POST['d'] , '%m-%d-%Y').date()
+			ad = int(request.POST['ad'])
+			ad = d - timedelta(days = ad)
+			number = room.rn
+			Rooms.objects.get(id = room.id).delete()
+			room = Rooms( mid = auth_user.id  , startTime = st , endTime = et , rn = number , date = d , addate = ad , status = False)
+			room.save()
+		return HttpResponseRedirect('/')
+	else:
+		Ro = Rooms.objects.all()
+		
+		rooms = []
+		for room in Ro :
+			if(auth_user.id==room.mid):
+				rooms.append(room)
+		return render(request,'changeslots.html', {'rooms':rooms })
+
+
+
 
 
 def addroom(request):
@@ -33,13 +78,16 @@ def addroom(request):
 		st = int(request.POST['st'])
 		et = int(request.POST['et'])
 		d = datetime.strptime(request.POST['d'] , '%m-%d-%Y').date()
-		ad = int(request.POST['ad'])
-		ad = d - timedelta(days = ad)
-		print(ad)
-		print(auth_user.id)
-		print(st)
-		room = Rooms( mid = auth_user.id  , startTime = st , endTime = et , rn = number , date = d , addate = ad , status = False)
-		room.save()
+		a = int(request.POST['ad'])
+		upd = datetime.strptime(request.POST['upd'] , '%m-%d-%Y').date()
+		while(d<=upd):
+			ad = d - timedelta(days = a)
+			print(ad)
+			print(auth_user.id)
+			print(st)
+			room = Rooms( mid = auth_user.id  , startTime = st , endTime = et , rn = number , date = d , addate = ad , status = False)
+			room.save()
+			d = d + timedelta(days=1)
 		return HttpResponseRedirect('addroom')
 	else:
 		if(auth == False or m_auth==False):
@@ -97,63 +145,94 @@ def bookroom(request):
 	else:
 		if(auth==True and m_auth==False):
 			return render(request,'bookroom.html' , {'rooms':rooms , 'rsize' : range(len(rooms))});
+
 def deletebookings(request):
-	if(request.method=='POST'):
-		index = int(request.POST['bid']) -1 
-		print(index)
-		global bookings
-		booking = bookings[index]
-		troom = Rooms.objects.get(booking.rid)
-		rooml = []
-		rooms = Rooms.objects.all()
-		for room in rooms:
-			if(room.rn==troom.rn and room.mid==troom.mid and room.date==troom.date):
-				room1.append(room)
-		for room in room1:
-			if(room.status==False):
-				if(room.startTime==troom.endTime):
-					room.startTime = troom.startTime 
-					room.save(update_fields = ['startTime'])
-					Rooms.objects.get(troom.id).delete()
-				elif(room.endTime==troom.endTime):
-					room.endTime = troom.endTime 
-					room.save(update_fields = ['endTime'])
-					Rooms.objects.get(troom.id).delete()
-		Bookings.objects.get(booking.id).delete()
-		return HttpResponseRedirect('/')
+	global bookings
+	if auth and not m_auth :
+		if(request.method=='POST'):
+			index = int(request.POST['bid']) -1 
+			print(index)
+			booking = bookings[index]
+			troom = Rooms.objects.get(id = booking.rid)
+			roomlist = []
+			rooms = Rooms.objects.all()
+			for room in rooms:
+				if(room.rn==troom.rn and room.mid==troom.mid and room.date==troom.date):
+					roomlist.append(room)
+			flag=0
+			temp = []
+			et = troom.endTime
+			st = troom.startTime
+			for room in roomlist:
+				print("here")
+				if(room.status==False):
+					if(room.startTime==et):
+						if(flag==0):
+							room.startTime = st 
+							room.save(update_fields = ['startTime'])
+							Rooms.objects.get(id=troom.id).delete()
+							flag=1
+							temp = room 
+						elif flag==1:
+							temp.endTime = room.endTime 
+							temp.save(update_fields = ['endTime'])
+							Rooms.objects.get(id=room.id).delete()
+							flag=2
+					elif(room.endTime==st ):
+						if flag ==0:
+							room.endTime = et 
+							room.save(update_fields = ['endTime'])
+							Rooms.objects.get(id=troom.id).delete()
+							flag=1 
+							temp=room
+						elif flag==1:
+							temp.startTime = room.startTime 
+							temp.save(update_fields = ['startTime'])
+							Rooms.objects.get(id=room.id).delete()
+							flag=2
+			if(flag==0):
+				troom.status = False
+				troom.save(update_fields = ['status'])
+			print(flag)
+			Bookings.objects.get(id=booking.id).delete()
+			return HttpResponseRedirect('/')
+		else:
+			bookings = []
+			al = Bookings.objects.all()
+			for ty in al :
+				if(ty.cid == auth_user.id):
+					bookings.append(ty)
+			return render(request , 'bookings.html' , {'bookings':bookings , 'delete':True})
 	else:
-		al = Bookings.objects.all()
-		bookings = []
-		for ty in al :
-			if(ty.cid == auth_user.id):
-				bookings.append(ty)
-		return render(request , 'bookings.html' , {'bookings':bookings , 'delete':True})
+		return HttpResponseRedirect('/signinuser')
 
 def bookings(request):
-	al = Bookings.objects.all()
 	global bookings
+	bookings = []
+	al = Bookings.objects.all()
 	for ty in al :
 		if(ty.cid == auth_user.id):
 			bookings.append(ty)
 	return render(request , 'bookings.html' , {'bookings':bookings , 'delete':False})
 
-
-
 def bookroom1(request):
-	if request.method=='POST':
-		d = datetime.strptime(request.POST['d'] , '%m-%d-%Y').date()
-		global st 
-		global et
-		st = int(request.POST['st'])
-		et = int(request.POST['et'])
-		temp = Rooms.objects.all()
-		for t in temp:
-			if(t.status==False and t.date == d and t.addate<d):
-				print("here")
-				if(t.startTime<=st and t.endTime>=et):
+	if auth and not m_auth :
+		if request.method=='POST':
+			d = datetime.strptime(request.POST['d'] , '%m-%d-%Y').date()
+			global st 
+			global et
+			st = int(request.POST['st'])
+			et = int(request.POST['et'])
+			temp = Rooms.objects.all()
+			for t in temp:
+				if(t.status==False and t.date == d and t.addate<d):
 					print("here")
-					rooms.append(t)
-		return render(request,'bookroom.html' , {'rooms':rooms , 'rsize' : range(len(rooms))});
+					if(t.startTime<=st and t.endTime>=et):
+						print("here")
+						rooms.append(t)
+			return render(request,'bookroom.html' , {'rooms':rooms , 'rsize' : range(len(rooms))});
+	else:
+		return HttpResponseRedirect('/signinuser')
 	
 def home(request):
 	global rooms
@@ -174,7 +253,6 @@ def home(request):
 		return render(request,'home.html' , {'auth' : auth, 'user' : auth_user , 'manager':m_auth , 'rooms':rooms , 'rsize' : range(len(rooms))});
 	else:
 		return render(request,'home.html' , {'auth' : auth, 'user' : auth_user , 'manager':m_auth , 'rooms':rooms , 'rsize' : range(len(rooms))});
-
 
 def signinmanager(request):
 	if request.method == 'POST':
@@ -212,16 +290,11 @@ def signinuser(request):
 	else:
 		return render(request , 'signinuser.html')
 
-
 def signin(request):
 	return render(request , 'signin.html')
 
-
-
 def signup(request):
 	return render(request , 'signup.html')
-
-
 
 def signupuser(request):
 	if request.method == 'POST':
@@ -244,7 +317,6 @@ def signupuser(request):
 		return HttpResponseRedirect('/')
 	else:
 		return render(request , 'signupuser.html')
-
 
 def signupmanager(request):
 	if request.method == 'POST':
