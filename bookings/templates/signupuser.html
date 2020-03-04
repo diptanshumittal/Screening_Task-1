@@ -2,8 +2,14 @@
 
     {% csrf_token %}
     Enter the loginid : <input type=" text" name="loginid"></br>
-    Enter the password : <input type=" text" name="password"></br>
+    Enter the password : <input type=" password" name="password"></br>
     Enter the name : <input type=" text" name="name"></br>
     Enter the email : <input type=" text" name="email"></br>
     <input type="submit">
 </form>
+
+{% for me in messages %}
+<div class="alert alert-danger" role="alert">
+{{me}}
+</div>
+{% endfor %}

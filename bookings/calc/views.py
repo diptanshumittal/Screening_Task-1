@@ -6,9 +6,14 @@ from calc.models import Bookings
 from calc.models import Manager
 from django.http import HttpResponseRedirect
 from datetime import datetime , timedelta
+from django.contrib import messages
+import re 
 # Create your views here.
 
 
+
+
+regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
 auth = False 
 m_auth = False
 auth_user = [] 
@@ -297,23 +302,39 @@ def signup(request):
 	return render(request , 'signup.html')
 
 def signupuser(request):
+	global regex
 	if request.method == 'POST':
-		loginid = request.POST['loginid']
-		password = request.POST['password']
-		name = request.POST['name']
-		email = request.POST['email']
+
 		customers = Customer.objects.all()
-		flag=0
+		loginid = request.POST['loginid']
+		if(len(loginid)<1):
+			messages.info(request,'Loginid cant be empty')
+			return HttpResponseRedirect('/signupuser')
 		for customer in customers:
 			if(customer.loginid == loginid):
-				flag=1
-		if(flag==0):
-			customer = Customer(loginid = loginid , name = name , password = password , email = email)
-			customer.save()
-			print(customer.id)
-			print("user created")
-		else:
+				messages.info(request,'Loginid already taken')
+				return HttpResponseRedirect('/signupuser')
+
+		password = request.POST['password']
+		if(len(password)<8):
+			messages.info(request,'Password too weak')
 			return HttpResponseRedirect('/signupuser')
+
+		name = request.POST['name']
+		if(len(name)<1):
+			messages.info(request,'Name cant be empty')
+			return HttpResponseRedirect('/signupuser')
+		email = request.POST['email']
+		if(len(email)<1):
+			messages.info(request,'Email cant be empty')
+			return HttpResponseRedirect('/signupuser')
+		elif(not re.search(regex,email)): 
+			messages.info(request,'Email invalid')
+			return HttpResponseRedirect('/signupuser')
+		customer = Customer(loginid = loginid , name = name , password = password , email = email)
+		customer.save()
+		print(customer.id)
+		print("user created")
 		return HttpResponseRedirect('/')
 	else:
 		return render(request , 'signupuser.html')
