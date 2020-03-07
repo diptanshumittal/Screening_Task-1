@@ -1,22 +1,30 @@
-{% for room in rooms %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+	{% for room in rooms %}
+	<form action="changeslots" method="post">
+		{% csrf_token %}
+		<p> {{room.rn}} vfv  {{room.mid}} 
+		Enter the Date :    <input type=" text" name="d"> 
+		Enter the StartTime :    <input type=" text" name="st"> 
+		Enter the End Time :    <input type=" text" name="et"> 
+		Enter the Advance Days :    <input type=" text" name="ad">
+		<input name="value" value="update" hidden> 
+		<input name="room" value="{{forloop.counter}}" hidden>
+		<input type="submit" value="book">
+	</form>
+	<form action="changeslots" method="post">
+		{% csrf_token %}
+		<input name="value" value="delete" hidden>
+		<input name="room" value="{{forloop.counter}}" hidden>
+		<input type="submit" value="Delete"></p>
+	</form>
 
-
-<form action="changeslots" method="post">
-	{% csrf_token %}
-	<p> {{room.rn}} vfv  {{room.mid}} 
-	Enter the Date :    <input type=" text" name="d"> 
-	Enter the StartTime :    <input type=" text" name="st"> 
-	Enter the End Time :    <input type=" text" name="et"> 
-	Enter the Advance Days :    <input type=" text" name="ad">
-	<input name="value" value="update" hidden> 
-	<input name="room" value="{{forloop.counter}}" hidden>
-	<input type="submit" value="book">
-</form>
-<form action="changeslots" method="post">
-	{% csrf_token %}
-	<input name="value" value="delete" hidden>
-	<input name="room" value="{{forloop.counter}}" hidden>
-	<input type="submit" value="Delete"></p>
-</form>
-
-{% endfor %}
+	{% endfor %}
+</body>
+</html>

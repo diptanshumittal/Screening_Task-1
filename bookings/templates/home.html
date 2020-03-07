@@ -1,45 +1,98 @@
-{% if auth %}
-<li>welcome  {{user.name}}</li>
-<li><a href="logout">Logout</a></li>
-{% else %}
-<li><a href="signin">Sign in</a></li>
-<li><a href="signup">Sign Up</a></li>
-{% endif %} 
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% if auth and manager %}
-<li><a href="addroom">Add Room slot</a></li>
-<li><a href="changeslots">Edit Room Slots</a></li>
-<li><a href="viewbookings">View Bookings</a></li>
-<form action="bookroom" method="post">
-	{% csrf_token %}
-	<input type="submit" value="View Summary of al Rooms">
-</form>
-{% elif auth %}
-<li><a href="bookroom">Book Room</a></li>
-<li><a href="deletebookings">Delete Bookings</a></li>
-<li><a href="bookings">View Bookings</a></li>
-{% endif %}
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<link rel="stylesheet" type="text/css" href="{% static 'css/myButton.css'%}">
+	<style>
+		div {
+			padding: 10px;
+		}
+	</style>
+</head>
+
+<body>
+	{% if auth %}
+	<li>welcome {{user.name}}</li>
+	<li><a href="logout">Logout</a></li>
+	{% else %}
+	<li><a href="signin">Sign in</a></li>
+	<li><a href="signup">Sign Up</a></li>
+	{% endif %}
+
+	{% if auth and manager %}
+	<li><a href="addroom">Add Room slot</a></li>
+	<li><a href="changeslots">Edit Room Slots</a></li>
+	<li><a href="viewbookings">View Bookings</a></li>
+	<form action="bookroom" method="post">
+		{% csrf_token %}
+		<input type="submit" value="View Summary of al Rooms">
+	</form>
+	{% elif auth %}
+	<li><a href="bookroom">Book Room</a></li>
+	<li><a href="deletebookings">Delete Bookings</a></li>
+	<li><a href="bookings">View Bookings</a></li>
+	{% endif %}
+
+	<div>
+		<form action="" method="post">
+			{% csrf_token %}
+			{{ form }}
+			<input type="submit" class="myButton">
+		</form>
+	</div>
 
 
-<form action="" method="post">
 
-	{% csrf_token %}
-	<p>     Enter the Date :    <input type=" text" name="d">    Enter the Start time :   <input type=" text" name="st">     Enter the End time :    <input type=" text" name="et"></p>
-	<input type="submit">
-</form>
+	{% if auth and not manager %}
+		<table id="myTableData" cellpadding="5">
+			<tr>
+				<td><b>Number</b></td>
+				<td><b>Manager Id</b></td>
+				<td><b>Start Time</b></td>
+				<td><b>End Time</b></td>
+				<td>&nbsp;</td>
+			</tr>
+			{% for room in rooms %}
+			<tr>
+				<td><b>{{room.rn}}</td>
+				<td><b>{{room.mid}}</td>
+				<td><b>{{room.startTime}}</td>
+				<td><b>{{room.endTime}}</td>
+				<td>
+					<form action="bookroom" method="post">
+						{% csrf_token %}
+						<input name="room" value="{{forloop.counter}}" hidden>
+						<input type="submit" value="Book" class='myButton'>
+					</form>
+				</td>
+			</tr>
+			{% endfor %}
+		</table>
+	{% else %}
+		<table id="myTableData" cellpadding="10px 5px 10px 5px">
+			<tr>
+				<td><b>Number</b></td>
+				<td><b>Manager Id</b></td>
+				<td><b>Start Time</b></td>
+				<td><b>End Time</b></td>
+			</tr>
+			{% for room in rooms %}
+			<tr>
+				<td><b>{{room.rn}}</td>
+				<td><b>{{room.mid}}</td>
+				<td><b>{{room.startTime}}</td>
+				<td><b>{{room.endTime}}</td>
+			</tr>
+			{% endfor %}
+		</table>
+	{% endif %}
 
 
-{% for room in rooms %}
 
-{% if auth and not manager %}
-<form action="bookroom" method="post">
-	{% csrf_token %}
-	<p> {{room.rn}} vfv  {{room.mid}} 
-	<input name="room" value="{{forloop.counter}}" hidden>
-	<input type="submit" value="book"></p>
-</form>
-{% else %}
-<p> {{room.rn}} vfv  {{room.mid}} </p>
-{% endif %}
+</body>
 
-{% endfor %}
+</html>

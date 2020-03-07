@@ -8,6 +8,7 @@ from django.http import HttpResponseRedirect
 from datetime import datetime , timedelta
 from django.contrib import messages
 import re 
+from calc.forms import HomeForm
 # Create your views here.
 
 
@@ -43,7 +44,6 @@ def viewbookings(request):
 	else:
 		return HttpResponseRedirect('/signinuser')
 
-
 def changeslots(request):
 	global rooms
 	if(request.method=='POST'):
@@ -71,10 +71,6 @@ def changeslots(request):
 			if(auth_user.id==room.mid):
 				rooms.append(room)
 		return render(request,'changeslots.html', {'rooms':rooms })
-
-
-
-
 
 def addroom(request):
 	global auth 
@@ -242,12 +238,13 @@ def bookroom1(request):
 def home(request):
 	global rooms
 	rooms=[]
+	form = HomeForm
 	if request.method=='POST':
-		d = datetime.strptime(request.POST['d'] , '%m-%d-%Y').date()
+		d = datetime.strptime(request.POST['date'] , '%Y-%m-%d').date()
 		global st 
 		global et
-		st = int(request.POST['st'])
-		et = int(request.POST['et'])
+		st = int(request.POST['StartTime'])
+		et = int(request.POST['EndTime'])
 		temp = Rooms.objects.all()
 		for t in temp:
 			if(t.status==False and t.date == d and t.addate<d):
@@ -255,9 +252,9 @@ def home(request):
 				if(t.startTime<=st and t.endTime>=et):
 					print("here")
 					rooms.append(t)
-		return render(request,'home.html' , {'auth' : auth, 'user' : auth_user , 'manager':m_auth , 'rooms':rooms , 'rsize' : range(len(rooms))});
+		return render(request,'home.html' , { 'form' : form ,'auth' : auth, 'user' : auth_user , 'manager':m_auth , 'rooms':rooms , 'rsize' : range(len(rooms))})
 	else:
-		return render(request,'home.html' , {'auth' : auth, 'user' : auth_user , 'manager':m_auth , 'rooms':rooms , 'rsize' : range(len(rooms))});
+		return render(request,'home.html' , { 'form' : form , 'auth' : auth, 'user' : auth_user , 'manager':m_auth , 'rooms':rooms , 'rsize' : range(len(rooms))})
 
 def signinmanager(request):
 	if request.method == 'POST':
@@ -352,7 +349,7 @@ def signupmanager(request):
 				flag=1
 		if(flag==0):
 			user = Manager(loginid = loginid , name = name , password = password , email = email)
-			user.save();
+			user.save()
 			print(user.id)
 			print("Manager created")
 		else:

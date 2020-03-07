@@ -1,18 +1,47 @@
-<form action="/bookroom1" method="post">
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
 
-	{% csrf_token %}
-	<p>     Enter the Date :    <input type=" text" name="d">    Enter the Start time :   <input type=" text" name="st">     Enter the End time :    <input type=" text" name="et"></p>
-	<input type="submit">
-</form>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<link rel="stylesheet" type="text/css" href="{% static 'css/myButton.css'%}">
+	<style>
+		div {
+			padding: 25px;
+		}
+	</style>
+</head>
+<style>
+	div {
+		border: 1px solid black;
+		padding: 25px;
+		background-color: lightblue;
+	}
+</style>
+
+<body>
+	<div>
+		<form action="/bookroom1" method="post">
+			{% csrf_token %}
+			{{ form.as_p }}
+			<input type="submit" class="myButton">
+		</form>
+	</div>
 
 
-{% for room in rooms %}
+	{% for room in rooms %}
 
-<form action="/bookroom" method="post">
-	{% csrf_token %}
-	<p> {{room.rn}} vfv  {{room.mid}} 
-	<input name="room" value="{{forloop.counter}}" hidden>
-	<input type="submit" value="book"></p>
-</form>
+	<form action="/bookroom" method="post">
+		{% csrf_token %}
+		<div>
+			{{room.rn}} {{room.mid}} {{room.startTime}} {{room.endTime}} {{room.date}} {{room.addate}}
+			<input name="room" value="{{forloop.counter}}" hidden>
+			<input type="submit" value="book" class="myButton"></div>
+	</form>
+	{% endfor %}
 
-{% endfor %}
+</body>
+
+</html>
