@@ -26,5 +26,16 @@
 	</form>
 
 	{% endfor %}
+
+
+	<div class="row">
+		{% for me in messages %}
+		<div class="alert alert-danger" role="alert">
+		{{me}}
+		</div>
+		{% endfor %}
+		</div>
+
+		
 </body>
 </html>

@@ -1,12 +1,69 @@
-<form action="addroom" method="post">
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
 
-    {% csrf_token %}
-    Enter the Room Number : <input type=" text" name="number"></br>
-    Enter Start Time : <input type=" text" name="st"></br>
-    Enter End Time : <input type=" text" name="et"></br>
-    Enter Date : <input type=" text" name="d"></br>
-    Enter Upto Date : <input type=" text" name="upd"></br>
-    Enter AdvanceDays : <input type=" text" name="ad"></br>
-    <input type="submit">
-</form>
-<li><a href="/">BACK</a></li>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Room</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/myButton.css'%}">
+    <style>
+        .column {
+            float: left;
+            width: fit-content;
+            padding-right: 10px;
+        }
+
+        .row:after {
+            width: fit-content;
+            content: "";
+            display: table;
+            clear: both;
+        }
+    </style>
+</head>
+
+<body>
+    <div style=" padding-left: 20px ; padding-top: 20px ; width:fit-content ; ">
+        <form action="addroom" method="post">
+            {% csrf_token %}
+            <div class="row"><b>Enter the following details :-</b></div>
+            <div class="row">
+                <div class="column">
+                    <p>Room Number : {{ form.number }}</p>
+                </div>
+                <div class="column">
+                    <p>Start Date : {{ form.d }}</p>
+                </div>
+                <div class="column">
+                    <p>End Date : {{ form.upd }}</p>
+                </div>
+                <div class="column">
+                    <p>Start Time : {{ form.st }}</p>
+                </div>
+                <div class="column">
+                    <p> End Time : {{ form.et }}</p>
+                </div>
+                <div class="column">
+                    <p> Buffer Days : {{ form.ad }}
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="submit"
+                            class="myButton"></p>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div style="padding: 20px;">
+        <a href="/"><b>BACK</b></a>
+    </div>
+
+    <div class="row" style="padding: 20px;">
+        {% for me in messages %}
+        <div class="alert alert-danger" role="alert">
+            {{me}}
+        </div>
+        {% endfor %}
+    </div>
+
+</body>
+
+</html>

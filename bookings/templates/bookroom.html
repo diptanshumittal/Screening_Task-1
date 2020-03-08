@@ -9,38 +9,80 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'css/myButton.css'%}">
 	<style>
 		div {
-			padding: 25px;
+			padding: 10px;
+		}
+		.column {
+			float: left;
+			width: fit-content;
+			padding-right: 20px;
+			vertical-align: bottom;
+			margin-top: auto;
+			margin-bottom: auto;
+		}
+		.row:after {
+			width: fit-content;
+			content: "";
+			display: table;
+			clear: both;
 		}
 	</style>
 </head>
-<style>
-	div {
-		border: 1px solid black;
-		padding: 25px;
-		background-color: lightblue;
-	}
-</style>
 
 <body>
-	<div>
-		<form action="/bookroom1" method="post">
+	<div class="row"><h4><b>Enter the details to see the rooms  - </b></h4></div>
+	<div style=" padding-left: 20px ; padding-top: 20px ; width:fit-content ; ">
+		<form action="bookroom1" method="post">
 			{% csrf_token %}
-			{{ form.as_p }}
-			<input type="submit" class="myButton">
+			<div class="row">
+				<div class="column">
+					<p>Enter the Date : {{ form.date}}</p>
+				</div>
+				<div class="column">
+					<p> Start Time : {{ form.StartTime}}</p>
+				</div>
+				<div class="column">
+					<p> End Time : {{ form.EndTime}}
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="submit"
+							class="myButton"></p>
+				</div>
+			</div>
+
 		</form>
 	</div>
+	{% if show %}
+	<table style="margin-left:auto;margin-right:auto;padding-block: 10px">
+		<tr style="font-size: larger;">
+			<td style="padding-right: 40px;"><b>Number</b></td>
+			<td style="padding-right: 40px;"><b>Manager Id</b></td>
+			<td style="padding-right: 40px;"><b>Start Time</b></td>
+			<td style="padding-right: 40px;"><b>End Time</b></td>
+			<td style="padding-right: 40px;">&nbsp;</td>
+		</tr>
+		{% for room in rooms %}
+		<tr style="font-size: large;">
+			<td style="padding-right: 40px;">{{room.rn}}</td>
+			<td style="padding-right: 40px;">{{room.mid}}</td>
+			<td style="padding-right: 40px;">{{room.startTime}}</td>
+			<td style="padding-right: 40px;">{{room.endTime}}</td>
+			<td>
+				<form action="bookroom" method="post">
+					{% csrf_token %}
+					<input name="room" value="{{forloop.counter}}" hidden>
+					<input type="submit" value="Book" class='myButton'>
+				</form>
+			</td>
+		</tr>
+		{% endfor %}
+	</table>
+	{% endif %}
 
-
-	{% for room in rooms %}
-
-	<form action="/bookroom" method="post">
-		{% csrf_token %}
-		<div>
-			{{room.rn}} {{room.mid}} {{room.startTime}} {{room.endTime}} {{room.date}} {{room.addate}}
-			<input name="room" value="{{forloop.counter}}" hidden>
-			<input type="submit" value="book" class="myButton"></div>
-	</form>
-	{% endfor %}
+	<div class="row">
+		{% for me in messages %}
+		<div class="alert alert-danger" role="alert">
+			{{me}}
+		</div>
+		{% endfor %}
+	</div>
 
 </body>
 

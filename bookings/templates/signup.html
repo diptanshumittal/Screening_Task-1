@@ -1,3 +1,12 @@
 <li>Select the category</li>
-<li><a href="signupuser">User</a></li>s
+<li><a href="signupuser">User</a></li>
 <li><a href="signupmanager">Manager</a></li>
+
+
+<div class="row">
+    {% for me in messages %}
+    <div class="alert alert-danger" role="alert">
+        {{me}}
+    </div>
+    {% endfor %}
+</div>

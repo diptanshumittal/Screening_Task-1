@@ -8,7 +8,9 @@ from django.http import HttpResponseRedirect
 from datetime import datetime , timedelta
 from django.contrib import messages
 import re 
-from calc.forms import HomeForm
+from calc.forms import CheckRoom
+from calc.forms import Signup
+from calc.forms import AddRoomForm
 # Create your views here.
 
 
@@ -20,7 +22,6 @@ m_auth = False
 auth_user = [] 
 rooms = []
 bookings =[]
-
 st = 0 
 et = 0 
 
@@ -74,28 +75,65 @@ def changeslots(request):
 
 def addroom(request):
 	global auth 
+	form = AddRoomForm
 	if request.method=='POST':
-		number = request.POST['number']
-		st = int(request.POST['st'])
-		et = int(request.POST['et'])
-		d = datetime.strptime(request.POST['d'] , '%m-%d-%Y').date()
+		rn = int(request.POST['number'])
+		ste = int(request.POST['st'])
+		ete = int(request.POST['et'])
+		d = datetime.strptime(request.POST['d'] , '%Y-%m-%d').date()
+		if( d <  datetime.date(datetime.now()) ):
+			messages.info(request,'Cannot add room in back date')
+			return HttpResponseRedirect('addroom' , {'form':form })
 		a = int(request.POST['ad'])
-		upd = datetime.strptime(request.POST['upd'] , '%m-%d-%Y').date()
+		upd = datetime.strptime(request.POST['upd'] , '%Y-%m-%d').date()
 		while(d<=upd):
+			st = ste
+			et = ete
 			ad = d - timedelta(days = a)
-			print(ad)
-			print(auth_user.id)
-			print(st)
-			room = Rooms( mid = auth_user.id  , startTime = st , endTime = et , rn = number , date = d , addate = ad , status = False)
+			alrooms = Rooms.objects.all()
+			flag=0
+			print(len(alrooms)) 
+			trom = []
+			for t in alrooms:
+				print("here")
+				if(t.status == False):
+					print("level2")
+					if( t.mid == auth_user.id):
+						print("level3")
+						if(t.date == d):
+							print("level4")
+							print(t.rn)
+							print(rn)
+							if(t.rn == rn ):
+								print("level5")
+								trom.append(t)
+			print(len(trom))
+			for t in trom:
+				if(t.startTime<=st and t.endTime>=et):
+					st = t.startTime
+					et = t.endTime
+					Rooms.objects.get(id=t.id).delete()
+				elif(t.startTime<st and t.endTime >= st and t.endTime<=et):
+					st = t.startTime
+					Rooms.objects.get(id=t.id).delete()
+				elif(t.endTime>=et and t.startTime>= st and t.startTime<=et ):
+					et = t.endTime
+					Rooms.objects.get(id=t.id).delete()
+				elif(t.startTime>=st and t.startTime<=et and t.endTime>=st and t.endTime<=et):
+					Rooms.objects.get(id=t.id).delete()
+			room = Rooms( mid = auth_user.id  , startTime = st , endTime = et , rn = rn , date = d , addate = ad , status = False)
 			room.save()
 			d = d + timedelta(days=1)
-		return HttpResponseRedirect('addroom')
+		return HttpResponseRedirect('addroom' , {'form':form })
 	else:
 		if(auth == False or m_auth==False):
+			messages.info(request,'Need to login as manager to add room slots')
 			return HttpResponseRedirect('signinmanager')
-		return render(request,'addroom.html');
+		return render(request,'addroom.html' , {'form':form } )
 
 def bookroom(request):
+	global rooms
+	form = CheckRoom
 	if request.method=='POST':
 		index = int(request.POST['room']) -1 
 		print(index)
@@ -145,11 +183,14 @@ def bookroom(request):
 		return HttpResponseRedirect('/')
 	else:
 		if(auth==True and m_auth==False):
-			return render(request,'bookroom.html' , {'rooms':rooms , 'rsize' : range(len(rooms))});
+			return render(request,'bookroom.html' , {'form':form})
+		else:
+			messages.info(request,'Login as user to book the room ')
+			return HttpResponseRedirect('/signinuser')
 
 def deletebookings(request):
 	global bookings
-	if auth and not m_auth :
+	if auth and not m_auth:
 		if(request.method=='POST'):
 			index = int(request.POST['bid']) -1 
 			print(index)
@@ -203,27 +244,37 @@ def deletebookings(request):
 			for ty in al :
 				if(ty.cid == auth_user.id):
 					bookings.append(ty)
+			if(len(bookings)==0):
+				return render(request , 'bookings.html' , {'show':False})
 			return render(request , 'bookings.html' , {'bookings':bookings , 'delete':True})
 	else:
+		messages.info(request,'Signin to delete bookings')
 		return HttpResponseRedirect('/signinuser')
 
 def bookings(request):
 	global bookings
-	bookings = []
-	al = Bookings.objects.all()
-	for ty in al :
-		if(ty.cid == auth_user.id):
-			bookings.append(ty)
-	return render(request , 'bookings.html' , {'bookings':bookings , 'delete':False})
+	if(auth and not m_auth):
+		bookings = []
+		al = Bookings.objects.all()
+		for ty in al :
+			if(ty.cid == auth_user.id):
+				bookings.append(ty)
+		if(len(bookings)==0):
+			return render(request , 'bookings.html' , {'show':False})
+		return render(request , 'bookings.html' , {'bookings':bookings , 'delete':False})
+	else:
+		messages.info(request,'Signin to delete bookings')
+		return HttpResponseRedirect('/signinuser')
 
 def bookroom1(request):
+	form = CheckRoom
 	if auth and not m_auth :
 		if request.method=='POST':
-			d = datetime.strptime(request.POST['d'] , '%m-%d-%Y').date()
+			d = datetime.strptime(request.POST['date'] , '%Y-%m-%d').date()
 			global st 
 			global et
-			st = int(request.POST['st'])
-			et = int(request.POST['et'])
+			st = int(request.POST['StartTime'])
+			et = int(request.POST['EndTime'])
 			temp = Rooms.objects.all()
 			for t in temp:
 				if(t.status==False and t.date == d and t.addate<d):
@@ -231,14 +282,15 @@ def bookroom1(request):
 					if(t.startTime<=st and t.endTime>=et):
 						print("here")
 						rooms.append(t)
-			return render(request,'bookroom.html' , {'rooms':rooms , 'rsize' : range(len(rooms))});
+			return render(request,'bookroom.html' , {'form' : form,'rooms':rooms , 'rsize' : range(len(rooms)),'show':True})
 	else:
+		messages.info(request,'Login as user to book the room ')
 		return HttpResponseRedirect('/signinuser')
 	
 def home(request):
 	global rooms
 	rooms=[]
-	form = HomeForm
+	form = CheckRoom
 	if request.method=='POST':
 		d = datetime.strptime(request.POST['date'] , '%Y-%m-%d').date()
 		global st 
@@ -252,9 +304,9 @@ def home(request):
 				if(t.startTime<=st and t.endTime>=et):
 					print("here")
 					rooms.append(t)
-		return render(request,'home.html' , { 'form' : form ,'auth' : auth, 'user' : auth_user , 'manager':m_auth , 'rooms':rooms , 'rsize' : range(len(rooms))})
+		return render(request,'home.html' , { 'table':True ,'form' : form ,'auth' : auth, 'user' : auth_user , 'manager':m_auth , 'rooms':rooms , 'rsize' : range(len(rooms))})
 	else:
-		return render(request,'home.html' , { 'form' : form , 'auth' : auth, 'user' : auth_user , 'manager':m_auth , 'rooms':rooms , 'rsize' : range(len(rooms))})
+		return render(request,'home.html' , { 'table':False ,'form' : form , 'auth' : auth, 'user' : auth_user , 'manager':m_auth , 'rooms':rooms , 'rsize' : range(len(rooms))})
 
 def signinmanager(request):
 	if request.method == 'POST':
@@ -300,8 +352,8 @@ def signup(request):
 
 def signupuser(request):
 	global regex
+	form = Signup
 	if request.method == 'POST':
-
 		customers = Customer.objects.all()
 		loginid = request.POST['loginid']
 		if(len(loginid)<1):
@@ -310,50 +362,65 @@ def signupuser(request):
 		for customer in customers:
 			if(customer.loginid == loginid):
 				messages.info(request,'Loginid already taken')
-				return HttpResponseRedirect('/signupuser')
+				return HttpResponseRedirect('/signupuser' , {'form': form })
 
 		password = request.POST['password']
 		if(len(password)<8):
 			messages.info(request,'Password too weak')
-			return HttpResponseRedirect('/signupuser')
+			return HttpResponseRedirect('/signupuser' ,{'form': form })
 
 		name = request.POST['name']
 		if(len(name)<1):
 			messages.info(request,'Name cant be empty')
-			return HttpResponseRedirect('/signupuser')
+			return HttpResponseRedirect('/signupuser', {'form': form })
 		email = request.POST['email']
 		if(len(email)<1):
 			messages.info(request,'Email cant be empty')
-			return HttpResponseRedirect('/signupuser')
+			return HttpResponseRedirect('/signupuser', {'form': form })
 		elif(not re.search(regex,email)): 
 			messages.info(request,'Email invalid')
-			return HttpResponseRedirect('/signupuser')
+			return HttpResponseRedirect('/signupuser' , {'form': form })
 		customer = Customer(loginid = loginid , name = name , password = password , email = email)
 		customer.save()
 		print(customer.id)
 		print("user created")
 		return HttpResponseRedirect('/')
 	else:
-		return render(request , 'signupuser.html')
+		return render(request , 'signupuser.html' , {'form': form })
 
 def signupmanager(request):
+	form = Signup
 	if request.method == 'POST':
+		customers = Customer.objects.all()
 		loginid = request.POST['loginid']
-		password = request.POST['password']
-		name = request.POST['name']
-		email = request.POST['email']
-		managers = Manager.objects.all()
-		flag=0
-		for manager in managers:
-			if(manager.loginid == loginid):
-				flag=1
-		if(flag==0):
-			user = Manager(loginid = loginid , name = name , password = password , email = email)
-			user.save()
-			print(user.id)
-			print("Manager created")
-		else:
+		if(len(loginid)<1):
+			messages.info(request,'Loginid cant be empty')
 			return HttpResponseRedirect('/signupmanager')
+		for customer in customers:
+			if(customer.loginid == loginid):
+				messages.info(request,'Loginid already taken')
+				return HttpResponseRedirect('/signupmanager' , {'form': form })
+
+		password = request.POST['password']
+		if(len(password)<8):
+			messages.info(request,'Password too weak')
+			return HttpResponseRedirect('/signupmanager' ,{'form': form })
+
+		name = request.POST['name']
+		if(len(name)<1):
+			messages.info(request,'Name cant be empty')
+			return HttpResponseRedirect('/signupmanager', {'form': form })
+		email = request.POST['email']
+		if(len(email)<1):
+			messages.info(request,'Email cant be empty')
+			return HttpResponseRedirect('/signupmanager', {'form': form })
+		elif(not re.search(regex,email)): 
+			messages.info(request,'Email invalid')
+			return HttpResponseRedirect('/signupmanager' , {'form': form })
+		customer = Customer(loginid = loginid , name = name , password = password , email = email)
+		customer.save()
+		print(customer.id)
+		print("user created")
 		return HttpResponseRedirect('/')
 	else:
-		return render(request , 'signupmanager.html')
+		return render(request , 'signupmanager.html' , {'form': form })

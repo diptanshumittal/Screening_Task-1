@@ -1,7 +1,52 @@
-<form action="/signinmanager" method="post">
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignIn Manager</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/myButton.css'%}">
+    <style>
+        .column {
+            float: left;
+            width: fit-content;
+            padding-right: 20px;
+        }
 
-    {% csrf_token %}
-    Enter the loginid : <input type=" text" name="loginid"></br>
-    Enter the password : <input type=" text" name="password"></br>
-    <input type="submit">
-</form>
+        .row:after {
+            width: fit-content;
+            content: "";
+            display: table;
+            clear: both;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <form action="/signinmanager" method="post">
+
+        {% csrf_token %}
+        <div class="row">
+            <h3><b>Enter the Details   -</b></h3>
+        </div>
+        <div class="row">
+            <div class="column">
+                <p> LoginId :     <input type=" text" name="loginid"></p>
+            </div>
+            <div class="column">
+                <p> Password :    <input type="password" name="password">  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="submit" value="SignIn" class="myButton"></p>
+            </div>
+        </div>  
+    </form>
+    
+    <div class="row">
+    {% for me in messages %}
+    <div class="alert alert-danger" role="alert">
+    {{me}}
+    </div>
+    {% endfor %}
+    </div>
+    
+</body>
+</html>
