@@ -36,43 +36,64 @@ def logout(request):
 
 def viewbookings(request):
 	if auth and m_auth :
-		bkgs = Bookings.objects.all()
-		li = []
-		for bkg in bkgs:
-			if(bkg.mid==auth_user.id):
-				li.append(bkg)
-		return render(request,'viewbookings.html' , {'bookings': li}); 
+		bookings = []
+		ongoing = [] 
+		al = Bookings.objects.all()
+		for ty in al :
+			if(ty.mid == auth_user.id):
+				room = Rooms.objects.get(id=ty.rid)
+				if(room.date<=datetime.date(datetime.now())):
+					bookings.append((ty,room))
+				else:
+					ongoing.append((ty,room))
+		show1 = True
+		show = True
+		if(len(bookings)==0):
+			show1 = False
+		if(len(ongoing)==0):
+			show=False
+		if(show==False and show1==False):
+			messages.info(request,'No bookings done ')
+			return HttpResponseRedirect('/')
+		return render(request , 'viewbookings.html' , {'bookings':bookings , 'delete':True , 'show':show ,'show':show , 'ongoing' : ongoing })
 	else:
-		return HttpResponseRedirect('/signinuser')
+		messages.info(request,'Login to view bookings')
+		return HttpResponseRedirect('/signinmanager')
 
 def changeslots(request):
 	global rooms
-	if(request.method=='POST'):
-		t = request.POST['value']
-		index = int(request.POST['room']) - 1
-		room = rooms[index]
-		if(t=="delete"):
-			Rooms.objects.get(id = room.id).delete()
-		else :
-			st = int(request.POST['st'])
-			et = int(request.POST['et'])
-			d = datetime.strptime(request.POST['d'] , '%m-%d-%Y').date()
-			ad = int(request.POST['ad'])
-			ad = d - timedelta(days = ad)
-			number = room.rn
-			Rooms.objects.get(id = room.id).delete()
-			room = Rooms( mid = auth_user.id  , startTime = st , endTime = et , rn = number , date = d , addate = ad , status = False)
-			room.save()
-		return HttpResponseRedirect('/')
+	form = AddRoomForm
+	if auth:
+		if(request.method=='POST'):
+			t = request.POST['value']
+			index = int(request.POST['room']) - 1
+			room = rooms[index]
+			if(t=="delete"):
+				Rooms.objects.get(id = room.id).delete()
+			else :
+				st = int(request.POST['st'])
+				et = int(request.POST['et'])
+				d = datetime.strptime(request.POST['d'] , '%Y-%m-%d').date()
+				ad = int(request.POST['ad'])
+				ad = d - timedelta(days = ad)
+				number = room.rn
+				Rooms.objects.get(id = room.id).delete()
+				room = Rooms( mid = auth_user.id  , startTime = st , endTime = et , rn = number , date = d , addate = ad , status = False)
+				room.save()
+			return HttpResponseRedirect('/')
+		else:
+			Ro = Rooms.objects.all()
+			rooms = []
+			for room in Ro :
+				if(auth_user.id==room.mid):
+					rooms.append(room)
+			if(len(rooms)==0):
+				return render(request,'changeslots.html' , {'show':False } )
+			return render(request,'changeslots.html', {'rooms':rooms , 'show':True , 'form':form })
 	else:
-		Ro = Rooms.objects.all()
+		messages.info(request,'Need to login as manager to change room slots')
+		return HttpResponseRedirect('signinmanager')
 		
-		rooms = []
-		for room in Ro :
-			if(auth_user.id==room.mid):
-				rooms.append(room)
-		return render(request,'changeslots.html', {'rooms':rooms })
-
 def addroom(request):
 	global auth 
 	form = AddRoomForm
@@ -190,7 +211,7 @@ def bookroom(request):
 
 def deletebookings(request):
 	global bookings
-	if auth and not m_auth:
+	if auth :
 		if(request.method=='POST'):
 			index = int(request.POST['bid']) -1 
 			print(index)
@@ -240,13 +261,25 @@ def deletebookings(request):
 			return HttpResponseRedirect('/')
 		else:
 			bookings = []
+			ongoing = [] 
 			al = Bookings.objects.all()
 			for ty in al :
 				if(ty.cid == auth_user.id):
-					bookings.append(ty)
+					room = Rooms.objects.get(id=ty.rid)
+					if(room.date<=datetime.date(datetime.now())):
+						bookings.append((ty,room))
+					else:
+						ongoing.append((ty,room))
+			show1 = True
+			show = True
 			if(len(bookings)==0):
-				return render(request , 'bookings.html' , {'show':False})
-			return render(request , 'bookings.html' , {'bookings':bookings , 'delete':True})
+				show1 = False
+			if(len(ongoing)==0):
+				show=False
+			if(show==False and show1==False):
+				messages.info(request,'No bokings done ')
+				return HttpResponseRedirect('/')
+			return render(request , 'bookings.html' , {'bookings':bookings , 'delete':True , 'show':show ,'show':show , 'ongoing' : ongoing })
 	else:
 		messages.info(request,'Signin to delete bookings')
 		return HttpResponseRedirect('/signinuser')
@@ -255,13 +288,25 @@ def bookings(request):
 	global bookings
 	if(auth and not m_auth):
 		bookings = []
+		ongoing = [] 
 		al = Bookings.objects.all()
 		for ty in al :
 			if(ty.cid == auth_user.id):
-				bookings.append(ty)
+				room = Rooms.objects.get(id=ty.rid)
+				if(room.date<=datetime.date(datetime.now())):
+					bookings.append((ty,room))
+				else:
+					ongoing.append((ty,room))
+		show1 = True
+		show = True
 		if(len(bookings)==0):
-			return render(request , 'bookings.html' , {'show':False})
-		return render(request , 'bookings.html' , {'bookings':bookings , 'delete':False})
+			show1 = False
+		if(len(ongoing)==0):
+			show=False
+		if(show==False and show1==False):
+			messages.info(request,'No bokings done ')
+			return HttpResponseRedirect('/')
+		return render(request , 'bookings.html' , {'bookings':bookings , 'delete':False , 'show':show ,'show':show , 'ongoing' : ongoing })
 	else:
 		messages.info(request,'Signin to delete bookings')
 		return HttpResponseRedirect('/signinuser')
@@ -270,18 +315,27 @@ def bookroom1(request):
 	form = CheckRoom
 	if auth and not m_auth :
 		if request.method=='POST':
-			d = datetime.strptime(request.POST['date'] , '%Y-%m-%d').date()
 			global st 
 			global et
+			d = datetime.strptime(request.POST['date'] , '%Y-%m-%d').date()
 			st = int(request.POST['StartTime'])
 			et = int(request.POST['EndTime'])
+			if( d <  datetime.date(datetime.now()) ):
+				messages.info(request,'Cannot book room in back date')
+				return HttpResponseRedirect('/bookroom' , {'form':form })
+			elif(st>=et):
+				messages.info(request,'StartTime should be lesser than the EndTime')
+				return HttpResponseRedirect('/bookroom' , {'form':form })			
 			temp = Rooms.objects.all()
 			for t in temp:
-				if(t.status==False and t.date == d and t.addate<d):
+				if(t.status==False and t.date == d and t.addate<datetime.date(datetime.now())):
 					print("here")
 					if(t.startTime<=st and t.endTime>=et):
 						print("here")
 						rooms.append(t)
+			if(len(rooms)==0):
+				messages.info(request , "There are no rooms available with the given details")
+				return HttpResponseRedirect('/bookroom' , {'form':form })
 			return render(request,'bookroom.html' , {'form' : form,'rooms':rooms , 'rsize' : range(len(rooms)),'show':True})
 	else:
 		messages.info(request,'Login as user to book the room ')
@@ -297,13 +351,22 @@ def home(request):
 		global et
 		st = int(request.POST['StartTime'])
 		et = int(request.POST['EndTime'])
+		if( d <  datetime.date(datetime.now()) ):
+			messages.info(request,'Cannot book room in back date')
+			return HttpResponseRedirect('/' , {'form':form })
+		elif(st>=et):
+			messages.info(request,'StartTime should be lesser than the EndTime')
+			return HttpResponseRedirect('/' , {'form':form })
 		temp = Rooms.objects.all()
 		for t in temp:
-			if(t.status==False and t.date == d and t.addate<d):
+			if(t.status==False and t.date == d and t.addate<=datetime.date(datetime.now())):
 				print("here")
 				if(t.startTime<=st and t.endTime>=et):
 					print("here")
 					rooms.append(t)
+		if(len(rooms)==0):
+				messages.info(request , "There are no rooms available with the given details")
+				return HttpResponseRedirect('/bookroom' , {'form':form })
 		return render(request,'home.html' , { 'table':True ,'form' : form ,'auth' : auth, 'user' : auth_user , 'manager':m_auth , 'rooms':rooms , 'rsize' : range(len(rooms))})
 	else:
 		return render(request,'home.html' , { 'table':False ,'form' : form , 'auth' : auth, 'user' : auth_user , 'manager':m_auth , 'rooms':rooms , 'rsize' : range(len(rooms))})
@@ -323,6 +386,7 @@ def signinmanager(request):
 				auth_user = user
 				print("verified "+user.name)
 				return HttpResponseRedirect('/')
+		messages.info(request,'LoginIn Details are incorrect')
 		return HttpResponseRedirect('signinmanager')
 	else:
 		return render(request , 'signinmanager.html')
@@ -336,10 +400,13 @@ def signinuser(request):
 			if(user.loginid==loginid and user.password == password):
 				global auth 
 				auth = True
+				global m_auth 
+				m_auth= False
 				global auth_user
 				auth_user = user
 				print("verified")
 				return HttpResponseRedirect('/')
+		messages.info(request,'LoginIn Details are incorrect')
 		return HttpResponseRedirect('/signinuser')
 	else:
 		return render(request , 'signinuser.html')

@@ -1,17 +1,96 @@
-{% for booking in bookings %}
-	<form action="/deletebookings" method="post">
-	{% csrf_token %}
-	<p> {{booking.rid}} vfv  {{booking.mid}} frfrf {{booking.rid}}
-	<input name="bid" value="{{forloop.counter}}" hidden>
-	<input type="submit" value="delete"></p>
-</form>
-{% endfor %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Room</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/myButton.css'%}">
+    <style>
+        .column {
+            float: left;
+            width: fit-content;
+            padding-right: 10px;
+        }
+
+        .row:after {
+            width: fit-content;
+            content: "";
+            display: table;
+            clear: both;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="row"><h4><b>Ongoing Bookings</b></h4></div>
+    {% if not show %}
+    <div class="row"><h4><b>There is no ongoing bookings to display</b></h4></div>
+    {% else %}
+    <table style="margin-left:auto;margin-right:auto;padding-block: 10px">
+        <tr style="font-size: larger;">
+            <td style="padding-right: 40px;"><b>Booking Id </b></td>
+            <td style="padding-right: 40px;"><b>Room Number</b></td>
+            <td style="padding-right: 40px;"><b>Start Time</b></td>
+            <td style="padding-right: 40px;"><b>End Time</b></td>
+            <td style="padding-right: 40px;"><b>Date</b></td>
+            <td style="padding-right: 40px;">&nbsp;</td>
+        </tr>
+        {% for booking , room in ongoing %}
+        <tr style="font-size: large;">
+            <td style="padding-right: 40px;">{{booking.id}}</td>
+            <td style="padding-right: 40px;">{{room.rn}}</td>
+            <td style="padding-right: 40px;">{{room.startTime}}</td>
+            <td style="padding-right: 40px;">{{room.endTime}}</td>
+            <td style="padding-right: 40px;">{{room.date}}</td>
+            <td>
+                <form action="deletebookings" method="post">
+                    {% csrf_token %}
+                    <input name="bid" value="{{forloop.counter}}" hidden>
+                    <input type="submit" value="Delete" class='myButton'>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
 
 
-<div class="row">
-    {% for me in messages %}
-    <div class="alert alert-danger" role="alert">
-    {{me}}
+
+
+    <div class="row"><h4><b>Past Bookings</b></h4></div>
+    {% if not show1 %}
+    <div class="row"><h4><b>No past bookings to display</b></h4></div>
+    {% else %}
+    <table style="margin-left:auto;margin-right:auto;padding-block: 10px">
+        <tr>
+            <td style="padding-right: 40px;"><b>Booking Id </b></td>
+            <td style="padding-right: 40px;"><b>Room Number</b></td>
+            <td style="padding-right: 40px;"><b>Start Time</b></td>
+            <td style="padding-right: 40px;"><b>End Time</b></td>            
+            <td style="padding-right: 40px;"><b>Date</b></td>
+        </tr>
+        {% for booking , room in bookings %}
+        <tr>
+            <td style="padding-right: 40px;">{{booking.id}}</td>
+            <td style="padding-right: 40px;">{{room.rn}}</td>
+            <td style="padding-right: 40px;">{{room.startTime}}</td>
+            <td style="padding-right: 40px;">{{room.endTime}}</td>            
+            <td style="padding-right: 40px;">{{room.date}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+
+    <div class="row">
+        {% for me in messages %}
+        <div class="alert alert-danger" role="alert">
+            {{me}}
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-    </div>
+</body>
+
+</html>

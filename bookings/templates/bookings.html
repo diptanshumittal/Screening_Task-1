@@ -32,8 +32,10 @@
 
 <body>
 
+
+    <div class="row"><h4><b>Ongoing Bookings</b></h4></div>
     {% if not show %}
-    <div class="row"><h4><b>There is no bookings to display</b></h4></div>
+    <div class="row"><h4><b>There is no ongoing bookings to display</b></h4></div>
     {% else %}
     {% if delete %}
     <table style="margin-left:auto;margin-right:auto;padding-block: 10px">
@@ -42,18 +44,20 @@
             <td style="padding-right: 40px;"><b>Room Number</b></td>
             <td style="padding-right: 40px;"><b>Start Time</b></td>
             <td style="padding-right: 40px;"><b>End Time</b></td>
+            <td style="padding-right: 40px;"><b>Date</b></td>
             <td style="padding-right: 40px;">&nbsp;</td>
         </tr>
-        {% for booking in bookings %}
+        {% for booking , room in ongoing %}
         <tr style="font-size: large;">
-            <td style="padding-right: 40px;">{{booking.rid}}</td>
-            <td style="padding-right: 40px;">{{booking.mid}}</td>
-            <td style="padding-right: 40px;">{{booking.cid}}</td>
-            <td style="padding-right: 40px;">{{booking}}</td>
+            <td style="padding-right: 40px;">{{booking.id}}</td>
+            <td style="padding-right: 40px;">{{room.rn}}</td>
+            <td style="padding-right: 40px;">{{room.startTime}}</td>
+            <td style="padding-right: 40px;">{{room.endTime}}</td>
+            <td style="padding-right: 40px;">{{room.date}}</td>
             <td>
-                <form action="bookroom" method="post">
+                <form action="deletebookings" method="post">
                     {% csrf_token %}
-                    <input name="room" value="{{forloop.counter}}" hidden>
+                    <input name="bid" value="{{forloop.counter}}" hidden>
                     <input type="submit" value="Delete" class='myButton'>
                 </form>
             </td>
@@ -66,18 +70,47 @@
             <td style="padding-right: 40px;"><b>Booking Id </b></td>
             <td style="padding-right: 40px;"><b>Room Number</b></td>
             <td style="padding-right: 40px;"><b>Start Time</b></td>
-            <td style="padding-right: 40px;"><b>End Time</b></td>
+            <td style="padding-right: 40px;"><b>End Time</b></td>           
+            <td style="padding-right: 40px;"><b>Date</b></td>
         </tr>
-        {% for booking in bookings %}
+        {% for booking , room in ongoing %}
         <tr>
-            <td style="padding-right: 40px;">{{booking.rid}}</td>
-            <td style="padding-right: 40px;">{{booking.mid}}</td>
-            <td style="padding-right: 40px;">{{booking.cid}}</td>
-            <td style="padding-right: 20px;">{{booking.endTime}}</td>
+            <td style="padding-right: 40px;">{{booking.id}}</td>
+            <td style="padding-right: 40px;">{{room.rn}}</td>
+            <td style="padding-right: 40px;">{{room.startTime}}</td>
+            <td style="padding-right: 40px;">{{room.endTime}}</td>
+            <td style="padding-right: 40px;">{{room.date}}</td>
         </tr>
         {% endfor %}
     </table>
     {% endif %}
+    {% endif %}
+
+
+
+
+    <div class="row"><h4><b>Past Bookings</b></h4></div>
+    {% if not show1 %}
+    <div class="row"><h4><b>No past bookings to display</b></h4></div>
+    {% else %}
+    <table style="margin-left:auto;margin-right:auto;padding-block: 10px">
+        <tr>
+            <td style="padding-right: 40px;"><b>Booking Id </b></td>
+            <td style="padding-right: 40px;"><b>Room Number</b></td>
+            <td style="padding-right: 40px;"><b>Start Time</b></td>
+            <td style="padding-right: 40px;"><b>End Time</b></td>            
+            <td style="padding-right: 40px;"><b>Date</b></td>
+        </tr>
+        {% for booking , room in bookings %}
+        <tr>
+            <td style="padding-right: 40px;">{{booking.id}}</td>
+            <td style="padding-right: 40px;">{{room.rn}}</td>
+            <td style="padding-right: 40px;">{{room.startTime}}</td>
+            <td style="padding-right: 40px;">{{room.endTime}}</td>            
+            <td style="padding-right: 40px;">{{room.date}}</td>
+        </tr>
+        {% endfor %}
+    </table>
     {% endif %}
 
 

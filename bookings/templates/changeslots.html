@@ -1,41 +1,84 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
-</head>
-<body>
-	{% for room in rooms %}
-	<form action="changeslots" method="post">
-		{% csrf_token %}
-		<p> {{room.rn}} vfv  {{room.mid}} 
-		Enter the Date :    <input type=" text" name="d"> 
-		Enter the StartTime :    <input type=" text" name="st"> 
-		Enter the End Time :    <input type=" text" name="et"> 
-		Enter the Advance Days :    <input type=" text" name="ad">
-		<input name="value" value="update" hidden> 
-		<input name="room" value="{{forloop.counter}}" hidden>
-		<input type="submit" value="book">
-	</form>
-	<form action="changeslots" method="post">
-		{% csrf_token %}
-		<input name="value" value="delete" hidden>
-		<input name="room" value="{{forloop.counter}}" hidden>
-		<input type="submit" value="Delete"></p>
-	</form>
+	<title>Add Room</title>
+	<link rel="stylesheet" type="text/css" href="{% static 'css/myButton.css'%}">
+	<style>
+		.column {
+			float: left;
+			width: fit-content;
+		}
 
+		.row:after {
+			width: fit-content;
+			content: "";
+			display: table;
+			clear: both;
+			height: fit-content;
+		}
+	</style>
+</head>
+
+<body>
+	{% if not show %}
+	<div class='row'>
+		<h4><b>There is no bookings to show</b></h4>
+	</div>
+	{% else %}
+	{% for room in rooms %}
+	<div style=" padding-left: 20px ; padding-top: 20px ; width:fit-content ; ">
+		<div style="padding: 10px;"><b>{{room.rn}} {{room.mid}} {{room.StartTime}} {{room.Endtime}} {{room.Date}} </b>
+		</div>
+		<div class="row">
+			<form action="changeslots" method="post">
+				{% csrf_token %}
+				<div class="column">
+					<p>Room Number : {{ form.number }}</p>
+				</div>
+				<div class="column">
+					<p>Start Date : {{ form.d }}</p>
+				</div>
+				<div class="column">
+					<p>Start Time : {{ form.st }}</p>
+				</div>
+				<div class="column">
+					<p> End Time : {{ form.et }}</p>
+				</div>
+				<div class="column">
+					<p> Buffer Days : {{ form.ad }}
+						&nbsp;&nbsp;&nbsp;
+						<input name="value" value="update" hidden>
+						<input name="room" value="{{forloop.counter}}" hidden>
+						<input type="submit" value="book" class="myButton"></p>
+				</div>
+			</form>
+			<div class="column">
+				<form action="changeslots" method="post">
+					{% csrf_token %}
+					<input name="value" value="delete" hidden>
+					<input name="room" value="{{forloop.counter}}" hidden>
+					<input type="submit" value="Delete" class="myButton"></p>
+				</form>
+			</div>
+		</div>
+
+	</div>
 	{% endfor %}
+	{% endif %}
+
 
 
 	<div class="row">
 		{% for me in messages %}
 		<div class="alert alert-danger" role="alert">
-		{{me}}
+			{{me}}
 		</div>
 		{% endfor %}
-		</div>
-
-		
+	</div>
 </body>
+
 </html>
