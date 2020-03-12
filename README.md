@@ -38,3 +38,12 @@ Technologies/Libraries to use:
 2.Python 
 3.HTML
 4.Git
+
+
+
+
+
+ yaksh.fossee.in Details :-
+ email - diptanshumittal@gmail.com
+ username - diptanshu18232
+ 
