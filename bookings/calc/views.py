@@ -366,7 +366,7 @@ def home(request):
 					rooms.append(t)
 		if(len(rooms)==0):
 				messages.info(request , "There are no rooms available with the given details")
-				return HttpResponseRedirect('/bookroom' , {'form':form })
+				return HttpResponseRedirect('/' , {'form':form })
 		return render(request,'home.html' , { 'table':True ,'form' : form ,'auth' : auth, 'user' : auth_user , 'manager':m_auth , 'rooms':rooms , 'rsize' : range(len(rooms))})
 	else:
 		return render(request,'home.html' , { 'table':False ,'form' : form , 'auth' : auth, 'user' : auth_user , 'manager':m_auth , 'rooms':rooms , 'rsize' : range(len(rooms))})
@@ -387,7 +387,7 @@ def signinmanager(request):
 				print("verified "+user.name)
 				return HttpResponseRedirect('/')
 		messages.info(request,'LoginIn Details are incorrect')
-		return HttpResponseRedirect('signinmanager')
+		return HttpResponseRedirect('/')
 	else:
 		return render(request , 'signinmanager.html')
 
@@ -407,7 +407,7 @@ def signinuser(request):
 				print("verified")
 				return HttpResponseRedirect('/')
 		messages.info(request,'LoginIn Details are incorrect')
-		return HttpResponseRedirect('/signinuser')
+		return HttpResponseRedirect('/')
 	else:
 		return render(request , 'signinuser.html')
 

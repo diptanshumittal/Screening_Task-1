@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    .column {
+      float: left;
+      width: 50%;
+      vertical-align: bottom;
+      margin-top: auto;
+      margin-bottom: auto;
+
+    }
+
+    .row:after {
+      width: 100%;
+      height: fit-content;
+      content: "";
+      display: table;
+      clear: both;
+      background-color: ;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    /* Full-width input fields */
+    input[type=text],
+    input[type=password] {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: inline-block;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    /* Set a style for all buttons */
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button:hover {
+      opacity: 0.8;
+    }
+
+    button:focus {
+      background-color: #f1f1f1;
+    }
+
+    .cancelbtn {
+      width: auto;
+      padding: 10px 18px;
+      background-color: #f44336;
+      align-self: flex-end;
+    }
+
+    .imgcontainer {
+      text-align: center;
+      margin: 24px 0 12px 0;
+      height: 10%;
+      position: relative;
+      width: max-content;
+      align-self: center;
+
+    }
+
+    img.avatar {
+      width: 40%;
+      border-radius: 50%;
+    }
+
+
+
+    span.psw {
+      float: right;
+      padding-top: 16px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgb(0, 0, 0);
+      background-color: rgba(0, 0, 0, 0.4);
+      padding-top: 60px;
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto 15% auto;
+      border: 1px solid #888;
+      width: 60%;
+      height: fit-content;
+      position: relative;
+      align-content: center;
+    }
+
+    .close {
+      position: absolute;
+      right: 25px;
+      top: 0;
+      color: #000;
+      font-size: 35px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: red;
+      cursor: pointer;
+    }
+
+    .animate {
+      -webkit-animation: animatezoom 0.6s;
+      animation: animatezoom 0.6s
+    }
+
+    .modalbutton {
+      background-color: rgba(0, 0, 0, 0.05);
+
+    }
+
+    @-webkit-keyframes animatezoom {
+      from {
+        -webkit-transform: scale(0)
+      }
+
+      to {
+        -webkit-transform: scale(1)
+      }
+    }
+
+    @keyframes animatezoom {
+      from {
+        transform: scale(0)
+      }
+
+      to {
+        transform: scale(1)
+      }
+    }
+
+    /* Change styles for span and cancel button on extra small screens */
+    @media screen and (max-width: 300px) {
+      span.psw {
+        display: block;
+        float: none;
+      }
+
+      .cancelbtn {
+        width: 100%;
+      }
+    }
+
+    .container {
+      padding: 16px;
+      width: max-content;
+      height: fit-content;
+      align-items: left;
+      align-self: flex-start;
+      display: block;
+
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>Modal Login Form</h2>
+
+  <button onclick="document.getElementById('id01').style.display='flex'" style="width:auto;">Login</button>
+
+  <div id="id01" class="modal">
+    <div class="modal-content animate">
+      <div class="row">
+        <button id="Customer" class="column" style="color: #000; background-color:white;">Customer</button>
+        <button id="Manager" class="column modalbutton"
+          style="color: #000;background-color: rgba(0, 0, 0, 0.05);">Manager</button>
+      </div>
+
+      <div class="container">
+        <form id="customform" action="/signupuser" action="POST">
+          {% csrf_token %}
+          <div class="container" style="text-align: left;align-content: flex-start;">
+          <label><b>Username</b></label>
+          <input type="text" placeholder="Enter Username" style="width: 100%;">
+
+          <label><b>Password</b></label>
+          <input type="password" placeholder="Enter Password" style="width: 100%;">
+
+          <button type="submit">Login</button>
+
+          </div>
+        </form>
+      </div>
+
+
+
+
+      <form id="manform" action="/signupuser" action="POST" style="display: none;">
+        {% csrf_token %}
+        <div class="container">
+          <label><b>Username</b></label>
+          <input type="text" placeholder="Enter Username" style="width: 100%;">
+
+          <label><b>Password</b></label>
+          <input type="password" placeholder="Enter Password" style="width: 100%;">
+
+          <button type="submit">Login</button>
+        </div>
+      </form>
+
+
+
+      <div class="container" style="background-color:#f1f1f1">
+        <button type="button" onclick="document.getElementById('id01').style.display='none'"
+          class="cancelbtn">Cancel</button>
+        <span class="psw">Forgot <a href="#">password?</a></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var modal = document.getElementById('id01');
+    var customer = document.getElementById('Customer');
+    var manager = document.getElementById('Manager');
+    var customform = document.getElementById('customform');
+    var manform = document.getElementById('manform');
+    customer.onclick = function (event) {
+      console.log("herer is the cursor customer");
+      customer.style.background = "white";
+      manager.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
+      customform.style.display = "flex";
+      manform.style.display = "none";
+    }
+    manager.onclick = function (event) {
+      console.log("herer is the cursor manager");
+      manager.style.background = "white";
+      customer.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
+      manform.style.display = "flex";
+      customform.style.display = "none";
+    }
+    window.onclick = function (event) {
+      if (event.target == modal) {
+        console.log(event.target);
+        modal.style.display = "none";
+      }
+    }
+  </script>
+
+</body>
+
+</html>

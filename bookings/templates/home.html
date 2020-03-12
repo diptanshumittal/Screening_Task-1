@@ -8,156 +8,444 @@
 	<title>Document</title>
 	<link rel="stylesheet" type="text/css" href="{% static 'css/myButton.css'%}">
 	<style>
-		div {
-			padding: 10px;
-		}
-		.column {
+		.column1 {
 			float: left;
 			width: fit-content;
 			padding-right: 20px;
+		}
+
+		.row1:after {
+			width: fit-content;
+			content: "";
+			display: table;
+			clear: both;
+			padding-left: 20px;
+		}
+
+		.column {
+			float: left;
+			width: 50%;
 			vertical-align: bottom;
 			margin-top: auto;
 			margin-bottom: auto;
+
 		}
+
 		.row:after {
-			width: fit-content;
+			width: 100%;
 			height: fit-content;
 			content: "";
 			display: table;
 			clear: both;
+			background-color: ;
+		}
+
+		body {
+			font-family: Arial, Helvetica, sans-serif;
+		}
+
+		/* Full-width input fields */
+		input[type=text],
+		input[type=password] {
+			width: 100%;
+			padding: 12px 20px;
+			margin: 8px 0;
+			display: inline-block;
+			border: 1px solid #ccc;
+			box-sizing: border-box;
+		}
+
+		/* Set a style for all buttons */
+		button {
+			background-color: #4CAF50;
+			color: white;
+			padding: 14px 20px;
+			margin: 8px 0;
+			border: none;
+			cursor: pointer;
+			width: 100%;
+		}
+
+		button:hover {
+			opacity: 0.8;
+		}
+
+		button:focus {
+			background-color: #f1f1f1;
+		}
+
+		.cancelbtn {
+			width: auto;
+			padding: 10px 18px;
+			background-color: #f44336;
+			align-self: flex-end;
+		}
+
+		.imgcontainer {
+			text-align: center;
+			margin: 24px 0 12px 0;
+			height: 10%;
+			position: relative;
+			width: max-content;
+			align-self: center;
+
+		}
+
+		img.avatar {
+			width: 40%;
+			border-radius: 50%;
+		}
+
+		.container {
+			padding: 16px;
+		}
+
+		span.psw {
+			float: right;
+			padding-top: 16px;
+		}
+
+		.modal {
+			display: none;
+			position: fixed;
+			z-index: 1;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			overflow: auto;
+			background-color: rgb(0, 0, 0);
+			background-color: rgba(0, 0, 0, 0.4);
+			padding-top: 60px;
+		}
+
+		.modal-content {
+			background-color: #fefefe;
+			margin: 5% auto 15% auto;
+			border: 1px solid #888;
+			width: 60%;
+			height: fit-content;
+			position: relative;
+			align-content: center;
+		}
+
+		.close {
+			position: absolute;
+			right: 25px;
+			top: 0;
+			color: #000;
+			font-size: 35px;
+			font-weight: bold;
+		}
+
+		.close:hover,
+		.close:focus {
+			color: red;
+			cursor: pointer;
+		}
+
+		.animate {
+			-webkit-animation: animatezoom 0.6s;
+			animation: animatezoom 0.6s
+		}
+
+		.modalbutton {
+			background-color: rgba(0, 0, 0, 0.05);
+
+		}
+
+		@-webkit-keyframes animatezoom {
+			from {
+				-webkit-transform: scale(0)
+			}
+
+			to {
+				-webkit-transform: scale(1)
+			}
+		}
+
+		@keyframes animatezoom {
+			from {
+				transform: scale(0)
+			}
+
+			to {
+				transform: scale(1)
+			}
+		}
+
+		/* Change styles for span and cancel button on extra small screens */
+		@media screen and (max-width: 300px) {
+			span.psw {
+				display: block;
+				float: none;
+			}
+
+			.cancelbtn {
+				width: 100%;
+			}
+		}
+
+
+
+
+		.hcontainer {
+			background-color: transparent;
+			height: fit-content;
+			width: 100%;
+			left: 0px;
+			top: 0px;
+
+
+		}
+
+		/* CSS Position: static (default), relative, absolute, fixed, sticky */
+
+
+		.box {
+			/* relative: Positions the element relative to its normal positon and will leave a gap at its normal position*/
+			/* position: relative; */
+			/* absolute: Positions the element relative to the positon of its first parent*/
+			/* position: absolute; */
+			/* top: 34px;
+        	left: 134px; */
+			/* fixed: Positions the element relative to the browser window; */
+			/* position: fixed;
+        	right: 4px;
+        	bottom: 2px */
+			/* sticky: Positions the element relative to the users scroll position */
+			display: inline-block;
+			position: fixed;
+			top: 0px;
+			left: 0px;
+			width: 100%;
+			height: 150px;
+			padding-left: 20px;
+			padding-right: 20px;
+			padding-top: 10px;
+			padding-bottom: 10px;
+			background-color: rgba(0, 0,0 , 0.2);
+			align-items: center;
+		}
+
+		.hbtn {
+			display: inline-block;
+			position: relative;
+			top: 40%;
+			padding: 10px;
+			background-color: transparent;
+			color: black;
+			width: fit-content;
+			height: fit-content;
+			text-decoration: none;
+			margin-left: 30px;
+		}
+
+		.hbtn:hover {
+			color: red;
 		}
 	</style>
 </head>
 
 <body>
 
-	<div style=" padding-top: 20px ; padding-left: 20px ; width: fit-content ; ">
-		<header class="header">
-			<div class="container">
-				<div class="row">
-					<div class="col">
-						<div class="header_content d-flex flex-row align-items-center justify-content-start">
-							<div class="header_content_inner d-flex flex-row align-items-end justify-content-start">
-								<div class="logo"><a href="index.html">Travello</a></div>
-								<nav class="main_nav">
-									<ul class="d-flex flex-row align-items-start justify-content-start">
-										<li class="active"><a href="index.html">Home</a></li>
-										<li><a href="about.html">About us</a></li>
-										<li><a href="#">Services</a></li>
-										<li><a href="news.html">News</a></li>
-										<li><a href="contact.html">Contact</a></li>
-									</ul>
-								</nav>
-								<div class="header_phone ml-auto">Call us: 00-56 445 678 33</div>
-	
-								<!-- Hamburger -->
-	
-								<div class="hamburger ml-auto">
-									<i class="fa fa-bars" aria-hidden="true"></i>
-								</div>
-	
-							</div>
+
+	<div class="hcontainer">
+
+		<div class="box">
+
+			{% if auth %}
+			<a style="color: #000;display: inline-block;position: relative;top: 40%; margin-right: 30px;"><b>WELCOME
+					{{user.name}} </b></a>
+			<a class="hbtn" href="logout">Logout</a>
+			{% else %}
+			<a onclick="document.getElementById('id01').style.display='flex'"
+				class="hbtn">Login</button>
+			<a class="hbtn" href="signup">Sign Up</a>
+			{% endif %}
+
+			{% if auth and manager %}
+			<a class="hbtn" href="addroom">Add Room slot</a>
+			<a class="hbtn" href="changeslots">Edit Room Slots</a>
+			<a class="hbtn" href="viewbookings">View Bookings</a>
+			{% elif auth %}
+			<a class="hbtn" href="bookroom">Book Room</a>
+			<a class="hbtn" href="deletebookings">Delete Bookings</a>
+			<a class="hbtn" href="bookings">View Bookings</a>
+			{% endif %}
+		</div>
+
+
+
+		<div style="position: absolute; top: 200px;">
+			<div class="row">
+				<h4><b> Check rooms : </b></h4>
+			</div>
+
+			<div style=" padding-left: 20px ; padding-top: 20px ; width:fit-content ; ">
+				<form action="" method="post">
+					{% csrf_token %}
+					<div class="row1">
+						<div class="column1">
+							<p>Enter the Date : {{ form.date}}</p>
+						</div>
+						<div class="column1">
+							<p> Start Time : {{ form.StartTime}}</p>
+						</div>
+						<div class="column1">
+							<p> End Time : {{ form.EndTime}}
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input
+									type="submit" class="myButton"></p>
 						</div>
 					</div>
-				</div>
-			</div>
-		</header>
-		{% if auth %}
-		<li>welcome {{user.name}}</li>
-		<li><a href="logout">Logout</a></li>
-		{% else %}
-		<li><a href="signin">Sign in</a></li>
-		<li><a href="signup">Sign Up</a></li>
-		{% endif %}
 
-		{% if auth and manager %}
-		<li><a href="addroom">Add Room slot</a></li>
-		<li><a href="changeslots">Edit Room Slots</a></li>
-		<li><a href="viewbookings">View Bookings</a></li>
-		{% elif auth %}
-		<li><a href="bookroom">Book Room</a></li>
-		<li><a href="deletebookings">Delete Bookings</a></li>
-		<li><a href="bookings">View Bookings</a></li>
-		{% endif %}
-	</div>
-
-
-	<div class="row" ><h4><b> Check rooms : </b></h4></div>
-
-	<div style=" padding-left: 20px ; padding-top: 20px ; width:fit-content ; ">
-		<form action="" method="post">
-			{% csrf_token %}
-			<div class="row">
-				<div class="column">
-					<p>Enter the Date :     {{ form.date}}</p>
-				</div>
-				<div class="column">
-					<p>  Start Time :    {{ form.StartTime}}</p>
-				</div>
-				<div class="column">
-					<p>  End Time : {{ form.EndTime}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <input type="submit" class="myButton"></p>
-				</div>
-			</div>	
-			
-		</form>
-	</div>
-
-	<div style="padding: 20px;">
-	{% if table %}
-	{% if auth and not manager %}
-	<table style="margin-left:auto;margin-right:auto;padding-block: 10px" >
-		<tr style="font-size: larger;">
-			<td style="padding-right: 40px;"><b>Number</b></td>
-			<td style="padding-right: 40px;"><b>Manager Id</b></td>
-			<td style="padding-right: 40px;"><b>Start Time</b></td>
-			<td style="padding-right: 40px;"><b>End Time</b></td>
-			<td style="padding-right: 40px;">&nbsp;</td>
-		</tr>
-		{% for room in rooms %}
-		<tr style="font-size: large;">
-			<td style="padding-right: 40px;">{{room.rn}}</td>
-			<td style="padding-right: 40px;">{{room.mid}}</td>
-			<td style="padding-right: 40px;">{{room.startTime}}</td>
-			<td style="padding-right: 40px;">{{room.endTime}}</td>
-			<td>
-				<form action="bookroom" method="post">
-					{% csrf_token %}
-					<input name="room" value="{{forloop.counter}}" hidden>
-					<input type="submit" value="Book" class='myButton'>
 				</form>
-			</td>
-		</tr>
-		{% endfor %}
-	</table>
-	{% else %}
-	<table style="margin-left:auto;margin-right:auto;padding-block: 10px" >
-		<tr>
-			<td style="padding-right: 20px;"><b>Number</b></td>
-			<td style="padding-right: 20px;"><b>Manager Id</b></td>
-			<td style="padding-right: 20px;"><b>Start Time</b></td>
-			<td style="padding-right: 20px;"><b>End Time</b></td>
-		</tr>
-		{% for room in rooms %}
-		<tr>
-			<td style="padding-right: 20px;">{{room.rn}}</td>
-			<td style="padding-right: 20px;">{{room.mid}}</td>
-			<td style="padding-right: 20px;">{{room.startTime}}</td>
-			<td style="padding-right: 20px;">{{room.endTime}}</td>
-		</tr>
-		{% endfor %}
-	</table>
-	{% endif %}
-	{% endif %}
-</div>
+			</div>
+
+			<div style="padding: 20px;">
+				{% if table %}
+				{% if auth and not manager %}
+				<table style="margin-left:auto;margin-right:auto;padding-block: 10px">
+					<tr style="font-size: larger;">
+						<td style="padding-right: 40px;"><b>Number</b></td>
+						<td style="padding-right: 40px;"><b>Manager Id</b></td>
+						<td style="padding-right: 40px;"><b>Start Time</b></td>
+						<td style="padding-right: 40px;"><b>End Time</b></td>
+						<td style="padding-right: 40px;">&nbsp;</td>
+					</tr>
+					{% for room in rooms %}
+					<tr style="font-size: large;">
+						<td style="padding-right: 40px;">{{room.rn}}</td>
+						<td style="padding-right: 40px;">{{room.mid}}</td>
+						<td style="padding-right: 40px;">{{room.startTime}}</td>
+						<td style="padding-right: 40px;">{{room.endTime}}</td>
+						<td>
+							<form action="bookroom" method="post">
+								{% csrf_token %}
+								<input name="room" value="{{forloop.counter}}" hidden>
+								<input type="submit" value="Book" class='myButton'>
+							</form>
+						</td>
+					</tr>
+					{% endfor %}
+				</table>
+				{% else %}
+				<table style="margin-left:auto;margin-right:auto;padding-block: 10px">
+					<tr>
+						<td style="padding-right: 20px;"><b>Number</b></td>
+						<td style="padding-right: 20px;"><b>Manager Id</b></td>
+						<td style="padding-right: 20px;"><b>Start Time</b></td>
+						<td style="padding-right: 20px;"><b>End Time</b></td>
+					</tr>
+					{% for room in rooms %}
+					<tr>
+						<td style="padding-right: 20px;">{{room.rn}}</td>
+						<td style="padding-right: 20px;">{{room.mid}}</td>
+						<td style="padding-right: 20px;">{{room.startTime}}</td>
+						<td style="padding-right: 20px;">{{room.endTime}}</td>
+					</tr>
+					{% endfor %}
+				</table>
+				{% endif %}
+				{% endif %}
+			</div>
+
+			<div class="row1">
+				{% for me in messages %}
+				<div class="alert alert-danger" style="color: #f44336;" role="alert">
+					{{me}}
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+
+		
+	</div>
 
 
-<div class="row">
-    {% for me in messages %}
-    <div class="alert alert-danger" role="alert">
-    {{me}}
-    </div>
-    {% endfor %}
-    </div>
+
+
+
+
+
+
+	<div id="id01" class="modal">
+		<div class="modal-content animate">
+
+			<div class="row">
+				<button id="Customer" class="column" style="color: #000; background-color:white;">Customer</button>
+				<button id="Manager" class="column modalbutton"
+					style="color: #000;background-color: rgba(0, 0, 0, 0.05);">Manager</button>
+			</div>
+
+			<form id="customform" class="container" action="/signinuser" method="POST" style="width: 90%;">
+				{% csrf_token %}
+				<div class="container" style="padding: 10px;align-items: center;">
+					<label><b>Username</b></label>
+					<input type="text" placeholder="Enter Username" name="loginid" style="width: 100%;">
+
+					<label><b>Password</b></label>
+					<input type="password" placeholder="Enter Password" name="password" style="width: 100%;">
+
+					<button type="submit">Login</button>
+				</div>
+
+			</form>
+
+			<form id="manform" action="/signinmanager" method="POST" style="display: none; width: 90%;">
+				{% csrf_token %}
+				<div class="container" style="padding: 10px;align-items: center;">
+					<label><b>Username</b></label>
+					<input type="text" placeholder="Enter Username" name="loginid" style="width: 100%;">
+
+					<label><b>Password</b></label>
+					<input type="password" placeholder="Enter Password" name="password" style="width: 100%;">
+
+					<button type="submit">Login</button>
+				</div>
+			</form>
+
+			<div class="container" style="background-color:#f1f1f1">
+				<button type="button" onclick="document.getElementById('id01').style.display='none'"
+					class="cancelbtn">Cancel</button>
+				<span class="psw">Forgot <a href="#">password?</a></span>
+			</div>
+
+		</div>
+		
+	</div>
+
+	<script>
+		var modal = document.getElementById('id01');
+		var customer = document.getElementById('Customer');
+		var manager = document.getElementById('Manager');
+		var customform = document.getElementById('customform');
+		var manform = document.getElementById('manform');
+		customer.onclick = function (event) {
+			console.log("herer is the cursor customer");
+			customer.style.background = "white";
+			manager.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
+			customform.style.display = "flex";
+			manform.style.display = "none";
+		}
+		manager.onclick = function (event) {
+			console.log("herer is the cursor manager");
+			manager.style.background = "white";
+			customer.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
+			manform.style.display = "flex";
+			customform.style.display = "none";
+		}
+		window.onclick = function (event) {
+			if (event.target == modal) {
+				console.log(event.target);
+				modal.style.display = "none";
+			}
+		}
+	</script>
+
+
+
+
 
 
 
