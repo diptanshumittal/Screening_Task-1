@@ -54,7 +54,8 @@ def viewbookings(request):
 			show=False
 		if(show==False and show1==False):
 			messages.info(request,'No bookings done ')
-			return HttpResponseRedirect('/')
+			form = CheckRoom
+			return HttpResponseRedirect('/' , {'form', form})
 		return render(request , 'viewbookings.html' , {'bookings':bookings , 'delete':True , 'show':show ,'show':show , 'ongoing' : ongoing })
 	else:
 		messages.info(request,'Login to view bookings')
@@ -80,7 +81,8 @@ def changeslots(request):
 				Rooms.objects.get(id = room.id).delete()
 				room = Rooms( mid = auth_user.id  , startTime = st , endTime = et , rn = number , date = d , addate = ad , status = False)
 				room.save()
-			return HttpResponseRedirect('/')
+			form = CheckRoom
+			return HttpResponseRedirect('/' , {'form', form})
 		else:
 			Ro = Rooms.objects.all()
 			rooms = []
@@ -201,7 +203,8 @@ def bookroom(request):
 		book.save()
 		print(book)
 		print(room)
-		return HttpResponseRedirect('/')
+		form = CheckRoom
+		return HttpResponseRedirect('/' , {'form', form})
 	else:
 		if(auth==True and m_auth==False):
 			return render(request,'bookroom.html' , {'form':form})
@@ -278,7 +281,8 @@ def deletebookings(request):
 				show=False
 			if(show==False and show1==False):
 				messages.info(request,'No bokings done ')
-				return HttpResponseRedirect('/')
+				form = CheckRoom
+				return HttpResponseRedirect('/' , {'form', form})
 			return render(request , 'bookings.html' , {'bookings':bookings , 'delete':True , 'show':show ,'show':show , 'ongoing' : ongoing })
 	else:
 		messages.info(request,'Signin to delete bookings')
@@ -305,7 +309,8 @@ def bookings(request):
 			show=False
 		if(show==False and show1==False):
 			messages.info(request,'No bokings done ')
-			return HttpResponseRedirect('/')
+			form = CheckRoom
+			return HttpResponseRedirect('/' , {'form', form})
 		return render(request , 'bookings.html' , {'bookings':bookings , 'delete':False , 'show':show ,'show':show , 'ongoing' : ongoing })
 	else:
 		messages.info(request,'Signin to delete bookings')
@@ -366,12 +371,13 @@ def home(request):
 					rooms.append(t)
 		if(len(rooms)==0):
 				messages.info(request , "There are no rooms available with the given details")
-				return HttpResponseRedirect('/' , {'form':form })
+				return HttpResponseRedirect('/' , { 'form':form })
 		return render(request,'home.html' , { 'table':True ,'form' : form ,'auth' : auth, 'user' : auth_user , 'manager':m_auth , 'rooms':rooms , 'rsize' : range(len(rooms))})
 	else:
 		return render(request,'home.html' , { 'table':False ,'form' : form , 'auth' : auth, 'user' : auth_user , 'manager':m_auth , 'rooms':rooms , 'rsize' : range(len(rooms))})
 
 def signinmanager(request):
+	form = CheckRoom
 	if request.method == 'POST':
 		loginid = request.POST['loginid']
 		password = request.POST['password']
@@ -385,13 +391,14 @@ def signinmanager(request):
 				global auth_user
 				auth_user = user
 				print("verified "+user.name)
-				return HttpResponseRedirect('/')
+				return HttpResponseRedirect('/' , {'form', form})
 		messages.info(request,'LoginIn Details are incorrect')
-		return HttpResponseRedirect('/')
+		return HttpResponseRedirect('/' , {'form', form})
 	else:
 		return render(request , 'signinmanager.html')
 
 def signinuser(request):
+	form = CheckRoom
 	if request.method == 'POST':
 		loginid = request.POST['loginid']
 		password = request.POST['password']
@@ -405,9 +412,9 @@ def signinuser(request):
 				global auth_user
 				auth_user = user
 				print("verified")
-				return HttpResponseRedirect('/')
+				return HttpResponseRedirect('/' , {'form', form})
 		messages.info(request,'LoginIn Details are incorrect')
-		return HttpResponseRedirect('/')
+		return HttpResponseRedirect('/' , {'form', form})
 	else:
 		return render(request , 'signinuser.html')
 

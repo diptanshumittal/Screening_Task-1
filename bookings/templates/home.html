@@ -259,9 +259,8 @@
 					{{user.name}} </b></a>
 			<a class="hbtn" href="logout">Logout</a>
 			{% else %}
-			<a onclick="document.getElementById('id01').style.display='flex'"
-				class="hbtn">Login</button>
-			<a class="hbtn" href="signup">Sign Up</a>
+			<a onclick="document.getElementById('id01').style.display='flex'" class="hbtn">Login</button>
+			<a onclick="document.getElementById('id02').style.display='flex'" class="hbtn">Sign Up</a>
 			{% endif %}
 
 			{% if auth and manager %}
@@ -363,6 +362,25 @@
 	</div>
 
 
+	<div id="id02" class="modal">
+		<div class="modal-content animate" style="display: inline-block;">
+			<div style="margin: 20px;">Select your user type :- </div>
+			<div class="row1">
+			<form class="column" action="signupuser" method="GET">
+				 <input type="submit" class="myButton" value="Customer" style="height: 50px; margin-top: 30px ;margin-bottom: 30px;margin-left: 20px; ">
+			</form>
+			<form class="column" action="signupmanager" method="GET">
+				<input type="submit" class="myButton" value="Manager" style="height: 50px; margin-top: 30px ; margin-bottom: 30px;">
+		   </form>
+		   </div>
+
+			
+
+		</div>
+		
+	</div>
+
+
 
 
 
@@ -415,8 +433,10 @@
 		
 	</div>
 
+
 	<script>
 		var modal = document.getElementById('id01');
+		var modal2 = document.getElementById('id02');
 		var customer = document.getElementById('Customer');
 		var manager = document.getElementById('Manager');
 		var customform = document.getElementById('customform');
@@ -439,6 +459,10 @@
 			if (event.target == modal) {
 				console.log(event.target);
 				modal.style.display = "none";
+			}
+			else if(event.target == modal2){
+				console.log(event.target);
+				modal2.style.display = "none";
 			}
 		}
 	</script>
