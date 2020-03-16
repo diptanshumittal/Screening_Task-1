@@ -1,0 +1,27 @@
+Download the following softwares:-
+1. Download and install visual studio code
+2. Download and install django version=3.0.3
+3. Download and install python version=3.7.3
+4. Download and install postgresql(set username=postgres and password=1999) version=12
+5. Download and install pgadmin4 v4.18 
+
+
+Setting up the database :-
+1. Open the pdadmin and use the postgresql login details given above to connect to the database 
+2. After the login create a new database named "temp3" inside the postgresql12 
+3. Now open the terminal in the folder and run the following commands sequentially 
+
+-python manage.py sqlmigrate calc 0001 
+
+-python manage.py migrate 
+//you can check the tables in the database in the pgadmin4 
+
+
+
+
+
+
+
+
+
+
