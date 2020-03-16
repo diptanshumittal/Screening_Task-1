@@ -53,7 +53,14 @@ Technologies/Libraries to use:
  Some assumptions made :-
  
  1.You can only book the slot for one day only.
+ 
+ 
  2.The duration should be  multiple of 60mins and for slots in midnight, you have to do two separate bookings for both the days 
+ 
+ 
  3.The slots will merge itself automatically if the rooms with deatils are added and overlap with the existing slot of the same room 
- 4.In add room the upto date means the date by upto which the slots are available daly upto that date 
+ 
+ 4.In add room the upto date means the date by upto which the slots are available daly upto that date and the buffer days means the advance days the customer is able to book the slot
+ 
+ 
  
