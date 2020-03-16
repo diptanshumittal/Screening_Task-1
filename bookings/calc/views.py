@@ -41,11 +41,12 @@ def viewbookings(request):
 		al = Bookings.objects.all()
 		for ty in al :
 			if(ty.mid == auth_user.id):
+				cus = Customer.objects.get(id=ty.cid)
 				room = Rooms.objects.get(id=ty.rid)
 				if(room.date<=datetime.date(datetime.now())):
-					bookings.append((ty,room))
+					bookings.append((ty,room,cus))
 				else:
-					ongoing.append((ty,room))
+					ongoing.append((ty,room,cus))
 		show1 = True
 		show = True
 		if(len(bookings)==0):

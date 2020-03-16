@@ -35,15 +35,19 @@
             <td style="padding-right: 40px;"><b>Start Time</b></td>
             <td style="padding-right: 40px;"><b>End Time</b></td>
             <td style="padding-right: 40px;"><b>Date</b></td>
+            <td style="padding-right: 40px;"><b>Customer Name</b></td>
+            <td style="padding-right: 40px;"><b>Custtomer Email</b></td>
             <td style="padding-right: 40px;">&nbsp;</td>
         </tr>
-        {% for booking , room in ongoing %}
+        {% for booking , room , customer in ongoing %}
         <tr style="font-size: large;">
             <td style="padding-right: 40px;">{{booking.id}}</td>
             <td style="padding-right: 40px;">{{room.rn}}</td>
             <td style="padding-right: 40px;">{{room.startTime}}</td>
             <td style="padding-right: 40px;">{{room.endTime}}</td>
             <td style="padding-right: 40px;">{{room.date}}</td>
+            <td style="padding-right: 40px;">{{customer.name}}</td>
+            <td style="padding-right: 40px;">{{customer.email}}</td>
             <td>
                 <form action="deletebookings" method="post">
                     {% csrf_token %}
