@@ -90,8 +90,8 @@ def changeslots(request):
 				if(auth_user.id==room.mid):
 					rooms.append(room)
 			if(len(rooms)==0):
-				return render(request,'changeslots.html' , {'show':False } )
-			return render(request,'changeslots.html', {'rooms':rooms , 'show':True , 'form':form })
+				return render(request,'changeslots.html' , {'show':False  , 'auth':auth , 'user':auth_user , 'manager':m_auth} )
+			return render(request,'changeslots.html', {'rooms':rooms , 'show':True , 'form':form , 'auth':auth ,'manager':m_auth, 'user':auth_user })
 	else:
 		messages.info(request,'Need to login as manager to change room slots')
 		return HttpResponseRedirect('signinmanager')

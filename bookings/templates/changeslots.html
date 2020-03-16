@@ -20,6 +20,48 @@
 			clear: both;
 			height: fit-content;
 		}
+
+		.hcontainer {
+			background-color: transparent;
+			height: fit-content;
+			width: 100%;
+			left: 0px;
+			top: 0px;
+
+
+		}
+
+		.box {
+			display: inline-block;
+			position: fixed;
+			top: 0px;
+			left: 0px;
+			width: 100%;
+			height: 150px;
+			padding-left: 20px;
+			padding-right: 20px;
+			padding-top: 10px;
+			padding-bottom: 10px;
+			background-color: rgba(0, 0, 0, 0.9);
+			align-items: center;
+		}
+
+		.hbtn {
+			display: inline-block;
+			position: relative;
+			top: 40%;
+			padding: 10px;
+			background-color: transparent;
+			color: whitesmoke;
+			width: fit-content;
+			height: fit-content;
+			text-decoration: none;
+			margin-left: 30px;
+		}
+
+		.hbtn:hover {
+			color: red;
+		}
 	</style>
 </head>
 
@@ -29,55 +71,90 @@
 		<h4><b>There is no bookings to show</b></h4>
 	</div>
 	{% else %}
-	{% for room in rooms %}
-	<div style=" padding-left: 20px ; padding-top: 20px ; width:fit-content ; ">
-		<div style="padding: 10px;"><b>{{room.rn}} {{room.mid}} {{room.StartTime}} {{room.Endtime}} {{room.Date}} </b>
+
+
+	<div class="hcontainer">
+
+		<div class="box">
+
+			{% if auth %}
+			<a style="color: whitesmoke;display: inline-block;position: relative;top: 40%; margin-right: 30px;"><b>WELCOME       {{user.name}} </b></a>
+			<a class="hbtn" href="logout">Logout</a>
+			{% else %}
+			<a onclick="document.getElementById('id01').style.display='flex'" class="hbtn">Login</button>
+				<a onclick="document.getElementById('id02').style.display='flex'" class="hbtn">Sign Up</a>
+				{% endif %}
+
+				{% if auth and manager %}
+				<a class="hbtn" href="addroom">Add Room slot</a>
+				<a class="hbtn" href="changeslots">Edit Room Slots</a>
+				<a class="hbtn" href="viewbookings">View Bookings</a>
+				{% elif auth %}
+				<a class="hbtn" href="bookroom">Book Room</a>
+				<a class="hbtn" href="deletebookings">Delete Bookings</a>
+				<a class="hbtn" href="bookings">View Bookings</a>
+				{% endif %}
 		</div>
-		<div class="row">
-			<form action="changeslots" method="post">
-				{% csrf_token %}
-				<div class="column">
-					<p>Room Number : {{ form.number }}</p>
+
+		<div style="margin-top: 200px;">     <h4><b>Room slots   :-</b></h4>
+			{% for room in rooms %}
+			<div style=" padding-left: 20px ; padding-top: 10px ;margin-top: 10px; width:fit-content ; ">
+				<div style="padding: 10px;display: inline-block;"><b>
+						<div style="padding: 10px;display: inline-block;">{{forloop.counter}}. </div>
+						<div style="padding: 10px;display: inline-block;"> Room Number - {{room.rn}}</div>
+						<div style="padding: 10px;display: inline-block;"> Slot start time - {{room.startTime}} </div>
+						<div style="padding: 10px;display: inline-block;">Slot end time - {{room.endtime}}</div>
+						<div style="padding: 10px;display: inline-block;"> Slot date - {{room.date}}</div>
+						<div style="padding: 10px;display: inline-block;"> Booking Advance date - {{room.addate}} </div>
+					</b>
 				</div>
-				<div class="column">
-					<p>Start Date : {{ form.d }}</p>
+				<div>
+					<form action="changeslots" method="post" style="display: inline-block;">
+						{% csrf_token %}
+						<div class="column">
+							<p>Room Number : {{ form.number }}</p>
+						</div>
+						<div class="column">
+							<p>Start Date : {{ form.d }}</p>
+						</div>
+						<div class="column">
+							<p>Start Time : {{ form.st }}</p>
+						</div>
+						<div class="column">
+							<p> End Time : {{ form.et }}</p>
+						</div>
+						<div class="column">
+							<p> Buffer Days : {{ form.ad }}
+								&nbsp;&nbsp;&nbsp;
+								<input name="value" value="update" hidden>
+								<input name="room" value="{{forloop.counter}}" hidden>
+								<input type="submit" value="book" class="myButton"></p>
+						</div>
+					</form>
+					<div class="column" style="display: inline-block;">
+						<form action="changeslots" method="post">
+							{% csrf_token %}
+							<input name="value" value="delete" hidden>
+							<input name="room" value="{{forloop.counter}}" hidden>
+							<input type="submit" value="Delete" class="myButton"></p>
+						</form>
+					</div>
 				</div>
-				<div class="column">
-					<p>Start Time : {{ form.st }}</p>
-				</div>
-				<div class="column">
-					<p> End Time : {{ form.et }}</p>
-				</div>
-				<div class="column">
-					<p> Buffer Days : {{ form.ad }}
-						&nbsp;&nbsp;&nbsp;
-						<input name="value" value="update" hidden>
-						<input name="room" value="{{forloop.counter}}" hidden>
-						<input type="submit" value="book" class="myButton"></p>
-				</div>
-			</form>
-			<div class="column">
-				<form action="changeslots" method="post">
-					{% csrf_token %}
-					<input name="value" value="delete" hidden>
-					<input name="room" value="{{forloop.counter}}" hidden>
-					<input type="submit" value="Delete" class="myButton"></p>
-				</form>
+
 			</div>
+			{% endfor %}
 		</div>
-
-	</div>
-	{% endfor %}
-	{% endif %}
+		{% endif %}
 
 
 
-	<div class="row">
-		{% for me in messages %}
-		<div class="alert alert-danger" role="alert">
-			{{me}}
+		<div class="row">
+			{% for me in messages %}
+			<div class="alert alert-danger" role="alert">
+				{{me}}
+			</div>
+			{% endfor %}
 		</div>
-		{% endfor %}
 	</div>
 </body>
 
