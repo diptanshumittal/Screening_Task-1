@@ -1,7 +1,7 @@
 # Screening_Task-1
 
 
-A room slot booking Django project havinf the following functionalities :-
+A room slot booking Django project having following functionalities :-
 
 1.Authenticate the user
 
